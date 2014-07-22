@@ -52,9 +52,13 @@ public class MainActivity extends ParkUpActivity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent(MainActivity.this, CheckinActivity.class);
+				Intent i = new Intent(MainActivity.this, CameraActivity.class);
 				startActivityForResult(i, 1);
 			}
+//			public void onClick(View v) {
+//				Intent i = new Intent(MainActivity.this, CheckinActivity.class);
+//				startActivityForResult(i, 1);
+//			}
 		});
 	}
 	
