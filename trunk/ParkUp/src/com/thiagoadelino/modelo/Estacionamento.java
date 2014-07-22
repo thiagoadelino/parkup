@@ -1,9 +1,14 @@
 package com.thiagoadelino.modelo;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Estacionamento {
+import com.thiagoadelino.arq.PersistDB;
 
+public class Estacionamento implements PersistDB, Serializable{
+
+	private int id;
+	
 	private Veiculo veiculo;
 	
 	private Local local;
@@ -62,5 +67,13 @@ public class Estacionamento {
 
 	public void setQualificacao(int qualificacao) {
 		this.qualificacao = qualificacao;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	} 
 }

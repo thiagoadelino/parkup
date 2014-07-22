@@ -1,6 +1,12 @@
 package com.thiagoadelino.modelo;
 
-public class Veiculo {
+import java.io.Serializable;
+
+import com.thiagoadelino.arq.PersistDB;
+
+public class Veiculo implements PersistDB, Serializable{
+	
+	private int id;
 	
 	private String nome;
 	
@@ -30,6 +36,14 @@ public class Veiculo {
 
 	public void setFoto(String foto) {
 		this.foto = foto;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 }

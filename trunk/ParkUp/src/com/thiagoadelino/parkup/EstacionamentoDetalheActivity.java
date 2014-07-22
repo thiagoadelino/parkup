@@ -3,7 +3,9 @@ package com.thiagoadelino.parkup;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
+import com.thiagoadelino.modelo.Estacionamento;
 import com.thiagoadelino.util.ParkUpActivity;
 
 public class EstacionamentoDetalheActivity extends ParkUpActivity {
@@ -15,6 +17,14 @@ public class EstacionamentoDetalheActivity extends ParkUpActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_estacionamento_detalhe);
 		setarTitulo(titulo);
+		
+		
+		Estacionamento estacionamento = (Estacionamento) getIntent().getSerializableExtra("estacionamentoSelecionado");
+		
+		TextView textView = (TextView)findViewById(R.id.textoestacionamento);
+		textView.setText(estacionamento.getLocal().getCidade()+ " - "+ estacionamento.getLocal().getBairro());
+		
+		
 	}
 
 	@Override
