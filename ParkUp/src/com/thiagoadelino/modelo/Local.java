@@ -1,6 +1,12 @@
 package com.thiagoadelino.modelo;
 
-public class Local {
+import java.io.Serializable;
+
+import com.thiagoadelino.arq.PersistDB;
+
+public class Local implements PersistDB, Serializable{
+	
+	private int id;
 	
 	private String coordenadaX;
 	
@@ -50,5 +56,13 @@ public class Local {
 	
 	public void setBairro(String bairro) {
 		this.bairro = bairro;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 }

@@ -8,4 +8,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.thiagoadelino.parkup.EstacionamentoDetalheActivity" >
 
+    <TextView
+        android:id="@+id/textoestacionamento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="57dp"
+        android:layout_marginTop="102dp"
+        android:text="TextView" />
+
 </RelativeLayout>
