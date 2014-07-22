@@ -1,7 +1,5 @@
 package com.thiagoadelino.parkup;
 
-import com.thiagoadelino.util.CameraUtil;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,8 +7,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.thiagoadelino.util.CameraUtil;
 
 public class CameraActivity extends Activity {
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -42,8 +41,8 @@ public class CameraActivity extends Activity {
 		                     data.getData(), Toast.LENGTH_LONG).show();
 		            
 		            
-		            ImageView imagem = (ImageView) findViewById(R.id.imageView1);
-		            imagem.setImageURI(data.getData());
+//		            ImageView imagem = (ImageView) findViewById(R.id.imageView1);
+//		            imagem.setImageURI(data.getData());
 		            
 		        } else if (resultCode == RESULT_CANCELED) {
 		            // User cancelled the image capture
