@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -14,7 +14,22 @@
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    
+    <style name="botaoLaranja">
+        <item name="android:background" >#B45F04</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:textColor">#FFFFFF</item>
     </style>
 
+    <style name="botaoLaranja.grande">
+        <item name="android:textSize">20dp</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+    
+    <style name="background">
+        <item name="android:background">@drawable/background</item>
+    </style>
+    
 </resources>
