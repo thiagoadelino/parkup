@@ -7,6 +7,8 @@ import com.thiagoadelino.arq.PersistDB;
 
 public class Estacionamento implements PersistDB, Serializable{
 
+	private static final long serialVersionUID = 3595870217408496615L;
+
 	private int id;
 	
 	private Veiculo veiculo;

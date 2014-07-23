@@ -13,8 +13,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.thiagoadelino.adapter.EstacionamentoHistoricoAdapter;
+import com.thiagoadelino.dao.EstacionamentoDao;
 import com.thiagoadelino.modelo.Estacionamento;
-import com.thiagoadelino.modelo.Local;
 import com.thiagoadelino.util.ParkUpActivity;
 
 public class EstacionamentoHistActivity extends ParkUpActivity {
@@ -47,27 +47,11 @@ public class EstacionamentoHistActivity extends ParkUpActivity {
 	}
 
 	private void recuperarItensListagem(ListView lista){
-
-		List<Estacionamento> hist = new ArrayList<Estacionamento>();
+		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
 		
-		Estacionamento e1 = new Estacionamento();
-		e1.setLocal(new Local());
-		e1.getLocal().setCidade("Natal");
-		e1.getLocal().setBairro("Lagoa Nova");
-		
-		Estacionamento e2 = new Estacionamento();
-		e2.setLocal(new Local());
-		e2.getLocal().setCidade("Recife");
-		e2.getLocal().setBairro("Lagoa velha");
-		
-		Estacionamento e3 = new Estacionamento();
-		e3.setLocal(new Local());
-		e3.getLocal().setCidade("Fortaleza");
-		e3.getLocal().setBairro("Lagoa seca");
-		
-		hist.add(e1);
-		hist.add(e2);
-		hist.add(e3);
+		List<Estacionamento> hist = dao.findAll();  
+		if ( hist == null )
+			hist = new ArrayList<Estacionamento>();
 		
 		EstacionamentoHistoricoAdapter adapter = new EstacionamentoHistoricoAdapter(hist, EstacionamentoHistActivity.this);
 		lista.setAdapter(adapter);
