@@ -6,33 +6,40 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.thiagoadelino.parkup.MainActivity" >
+    tools:context="com.thiagoadelino.parkup.MainActivity" 
+    android:background="@drawable/background" > 
 
+    <LinearLayout 
+    	android:id="@+id/linearTopo"
+    	android:orientation="horizontal"
+    	android:layout_alignParentTop="true"
+    	android:layout_height="wrap_content"
+    	android:layout_width="match_parent">
+    
+        <Button
+            android:id="@+id/veiculos"
+        	android:text="Veículos" 
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        style="@style/botaoLaranja"/>
+	
+	    <Button
+	        android:id="@+id/estacionamentos"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Estacionamentos"
+	        android:layout_weight="1"
+	        style="@style/botaoLaranja" />
+        
+    </LinearLayout>
+    
     <Button
-        android:id="@+id/estacionamentos"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+    	android:id="@+id/iniciarretornarcheckin"
+	    android:text="Iniciar" 
+        style="@style/botaoLaranja.grande"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="Estacionamentos" />
-
-    <Button
-        android:id="@+id/veiculos"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="Veículos" />
-
-    <Button
-        android:id="@+id/iniciarretornarcheckin"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Iniciar" />
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

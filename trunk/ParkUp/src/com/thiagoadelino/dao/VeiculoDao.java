@@ -34,7 +34,7 @@ public class VeiculoDao {
 				veiculo.setId(cursor.getInt(0));
 				veiculo.setFoto(cursor.getString(1));
 				veiculo.setNome(cursor.getString(2));
-				veiculo.setCarro(cursor.getInt(2)==0?false:true);
+				veiculo.setCarro(cursor.getInt(3)==0?false:true);
 				
 				veiculos.add(veiculo);
 			} while (cursor.moveToNext());
@@ -46,7 +46,6 @@ public class VeiculoDao {
 		this.db = sqliteCrud.getWritableDatabase();
 		
 		ContentValues cv = new ContentValues();
-		cv.put("id", veiculo.getId());
 		cv.put("foto", veiculo.getFoto());
 		cv.put("nome", veiculo.getNome());
 		cv.put("id_veiculo", veiculo.isCarro()?1:0);

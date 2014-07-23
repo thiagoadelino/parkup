@@ -1,9 +1,18 @@
 package com.thiagoadelino.parkup;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.Toast;
+
+import com.thiagoadelino.dao.VeiculoDao;
+import com.thiagoadelino.modelo.Veiculo;
 
 public class CadastroVeiculo extends Activity {
 
@@ -11,6 +20,39 @@ public class CadastroVeiculo extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.cadastro_veiculo);
+		
+		Button botao = (Button) findViewById(R.id.button1);
+		botao.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				Veiculo veiculo = new Veiculo();
+				
+				EditText modelo = (EditText) findViewById(R.id.editText1);
+				
+				veiculo.setNome(modelo.getText().toString());
+				
+				RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radiogroup);
+				int radio = radioGroup.getCheckedRadioButtonId();
+				
+				if (radio == R.id.radioButton1)
+					veiculo.setCarro(true);
+				else
+					veiculo.setCarro(false);
+				
+				VeiculoDao dao = new VeiculoDao(getApplicationContext());
+				dao.salvar(veiculo);
+				
+				Intent i = new Intent();
+				i.putExtra("novo_veiculo", veiculo);
+				setResult(RESULT_OK, i);
+				finish();
+//				Intent i = new Intent(ListaVeiculoActivity.this, CadastroVeiculo.class);
+//				startActivityForResult(i, 1);
+			}
+		});
+		
 	}
 
 	@Override

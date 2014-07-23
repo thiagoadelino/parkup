@@ -3,6 +3,7 @@ package com.thiagoadelino.parkup;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -20,8 +22,12 @@ import com.thiagoadelino.util.ParkUpActivity;
 
 public class ListaVeiculoActivity extends ParkUpActivity {
 
-	private static final String titulo = "VeÃ­culos";
+	private static final String titulo = "Veículos";
+	
+	private static final int ADD_VEICULO = 100;
 
+	private VeiculoAdapter adapter;
+	private List<Veiculo> hist;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,8 +40,8 @@ public class ListaVeiculoActivity extends ParkUpActivity {
 			
 			@Override
 			public void onClick(View v) {
-//				Intent i = new Intent(MainActivity.this, EstacionamentoHistActivity.class);
-//				startActivityForResult(i, 1);
+				Intent i = new Intent(ListaVeiculoActivity.this, CadastroVeiculo.class);
+				startActivityForResult(i, ADD_VEICULO);
 			}
 		});
 		
@@ -58,14 +64,30 @@ public class ListaVeiculoActivity extends ParkUpActivity {
 		});
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == ADD_VEICULO){
+			if (resultCode == RESULT_OK){
+				
+				Veiculo v = (Veiculo) data.getSerializableExtra("novo_veiculo");
+				if (hist != null && !hist.contains(v))
+					hist.add(v);
+					
+				adapter.notifyDataSetChanged();
+				
+				Toast.makeText(ListaVeiculoActivity.this, "Veiculo cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+	
 	private void recuperarItensListagem(ListView lista) {
 		VeiculoDao dao = new VeiculoDao(getApplicationContext());
 		
-		List<Veiculo> hist = dao.findAll();  
+		hist = dao.findAll();  
 		if ( hist == null )
 			hist = new ArrayList<Veiculo>();
 		
-		VeiculoAdapter adapter = new VeiculoAdapter(hist, ListaVeiculoActivity.this);
+		adapter = new VeiculoAdapter(hist, ListaVeiculoActivity.this);
 		lista.setAdapter(adapter);
 		
 	}
