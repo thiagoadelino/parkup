@@ -6,6 +6,8 @@ import com.thiagoadelino.arq.PersistDB;
 
 public class Local implements PersistDB, Serializable{
 	
+	private static final long serialVersionUID = -9135186725726665571L;
+
 	private int id;
 	
 	private String coordenadaX;

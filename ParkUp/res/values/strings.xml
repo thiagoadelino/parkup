@@ -11,5 +11,6 @@
     <string name="title_activity_checkin">CheckinActivity</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
     <string name="title_activity_camera">CameraActivity</string>
+    <string name="title_activity_cadastro_veiculo">CadastroVeiculo</string>
 
 </resources>

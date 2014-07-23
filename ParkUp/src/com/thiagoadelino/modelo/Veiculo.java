@@ -6,6 +6,8 @@ import com.thiagoadelino.arq.PersistDB;
 
 public class Veiculo implements PersistDB, Serializable{
 	
+	private static final long serialVersionUID = 36491484319661070L;
+
 	private int id;
 	
 	private String nome;
