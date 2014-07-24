@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.thiago.parkupp.Veiculo" >
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+    
+    
+    <item
+        android:id="@+id/addveiculo"
+        android:icon="@drawable/add"
+        android:orderInCategory="2"
+        android:showAsAction="always"
+        android:title="Adicionar"/>
+
+    <item
+        android:id="@+id/editarveiculo"
+        android:icon="@drawable/pencil"
+        android:orderInCategory="3"
+        android:showAsAction="always"
+        android:title="Editar"/>
+
+</menu>
