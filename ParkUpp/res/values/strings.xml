@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ParkApp!</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Configurações</string>
+    <string name="title_activity_veiculo">Veículos</string>
+    <string name="title_activity_local">Locais</string>
+    <string name="title_activity_cadastro_veiculo">Veículo</string>
+    <string name="title_activity_detalhe_veiculo">Detalhes</string>
+    <string name="title_activity_detalhe_local">Detalhes</string>
+
+</resources>
