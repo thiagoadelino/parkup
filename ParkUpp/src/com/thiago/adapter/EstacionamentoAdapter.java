@@ -12,13 +12,13 @@ import android.widget.TextView;
 
 import com.thiago.modelo.EstacionamentoPU;
 
-public class EstacionamentoHistoricoAdapter extends BaseAdapter {
+public class EstacionamentoAdapter extends BaseAdapter {
 
 	private List<EstacionamentoPU> historico;
 
 	private Context contexto;
 	
-	public EstacionamentoHistoricoAdapter(List<EstacionamentoPU> historico, Context contexto) {
+	public EstacionamentoAdapter(List<EstacionamentoPU> historico, Context contexto) {
 		this.historico = historico;
 		this.contexto = contexto;
 	}

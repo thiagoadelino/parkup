@@ -34,7 +34,7 @@ public class VeiculoDao {
 				veiculo.setId(cursor.getInt(0));
 				veiculo.setFoto(cursor.getString(1));
 				veiculo.setNome(cursor.getString(2));
-				veiculo.setCarro(cursor.getInt(2)==0?false:true);
+				veiculo.setCarro(cursor.getInt(3)==0?false:true);
 				
 				veiculos.add(veiculo);
 			} while (cursor.moveToNext());
