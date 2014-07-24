@@ -12,13 +12,13 @@ import android.widget.TextView;
 
 import com.thiago.modelo.LocalPU;
 
-public class CheckinAdapter extends BaseAdapter{
+public class LocalAdapter extends BaseAdapter{
 
 	private List<LocalPU> historico;
 
 	private Context contexto;
 	
-	public CheckinAdapter(List<LocalPU> historico, Context contexto) {
+	public LocalAdapter(List<LocalPU> historico, Context contexto) {
 		this.historico = historico;
 		this.contexto = contexto;
 	}

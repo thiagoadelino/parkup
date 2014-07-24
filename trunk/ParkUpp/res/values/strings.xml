@@ -9,5 +9,6 @@
     <string name="title_activity_cadastro_veiculo">Veículo</string>
     <string name="title_activity_detalhe_veiculo">Detalhes</string>
     <string name="title_activity_detalhe_local">Detalhes</string>
+    <string name="title_activity_retornar">Retornar</string>
 
 </resources>

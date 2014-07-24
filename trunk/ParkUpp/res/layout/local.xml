@@ -6,11 +6,22 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.thiago.parkupp.Local" >
+    tools:context="com.thiago.parkupp.Local">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" >
+
+        <ListView
+            android:id="@+id/listViewLocal"
+            android:layout_width="match_parent"
+            android:layout_height="364dp" >
+        </ListView>
+    </LinearLayout>
+
 
 </RelativeLayout>

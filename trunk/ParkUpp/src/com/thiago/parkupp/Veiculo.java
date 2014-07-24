@@ -58,8 +58,11 @@ public class Veiculo extends Activity {
 				VeiculoPU v = (VeiculoPU) data.getSerializableExtra("novo_veiculo");
 				if (hist != null && !hist.contains(v))
 					hist.add(v);
-					
+				
 				adapter.notifyDataSetChanged();
+				
+				ListView lista = (ListView) findViewById(R.id.listViewVeiculo);
+				recuperarItensListagem(lista);
 
 				Toast.makeText(Veiculo.this, "Veiculo cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
 			}
@@ -69,14 +72,13 @@ public class Veiculo extends Activity {
 	private void recuperarItensListagem(ListView lista) {
 		VeiculoDao dao = new VeiculoDao(getApplicationContext());
 		
-		List<VeiculoPU> hist = dao.findAll();  
+		hist = dao.findAll();  
 		if ( hist == null ){
 			hist = new ArrayList<VeiculoPU>();
-			
 		}
+		
 		adapter = new VeiculoAdapter(hist, Veiculo.this);
 		lista.setAdapter(adapter);
-		
 	}
 	
 	@Override
