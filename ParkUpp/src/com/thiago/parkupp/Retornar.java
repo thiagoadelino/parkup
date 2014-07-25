@@ -31,6 +31,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
 import com.thiago.dao.VeiculoDao;
 import com.thiago.modelo.EstacionamentoPU;
 import com.thiago.modelo.VeiculoPU;
@@ -55,29 +57,30 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.retornar);
-        getLocalizacao();
+//        getLocalizacao();
+        
         locationClient = new LocationClient(this, this, this);
-        
-        EstacionamentoPU estacionamento = (EstacionamentoPU) getIntent().getSerializableExtra("estacionamento");
-        
-        veiculo = (VeiculoPU) getIntent().getSerializableExtra("veiculo");
-        if(veiculo == null){
-        	veiculo = new VeiculoPU();
-        	veiculo.setCarro(true);
-        	veiculo.setNome("Veiculo:" + new Date().toString());
-        	estacionamento.setVeiculo(veiculo);
-        	//setarLocal
-        }else{
-        	
-        	File imgFile = new  File(veiculo.getFoto());
-        	if(imgFile.exists()){
-        	    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-        	    ImageButton imagem = (ImageButton) findViewById(R.id.imageView1);
-        	    imagem.setImageBitmap(myBitmap);
-        	}
-        }
-        
-        
+    
+//        EstacionamentoPU estacionamento = (EstacionamentoPU) getIntent().getSerializableExtra("estacionamento");
+//        
+//        veiculo = (VeiculoPU) getIntent().getSerializableExtra("veiculo");
+//        if(veiculo == null){
+//        	veiculo = new VeiculoPU();
+//        	veiculo.setCarro(true);
+//        	veiculo.setNome("Veiculo:" + new Date().toString());
+//        	estacionamento.setVeiculo(veiculo);
+//        	//setarLocal
+//        }else{
+//        	
+//        	File imgFile = new  File(veiculo.getFoto());
+//        	if(imgFile.exists()){
+//        	    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+//        	    ImageButton imagem = (ImageButton) findViewById(R.id.imageView1);
+//        	    imagem.setImageBitmap(myBitmap);
+//        	}
+//        }
+//        
+//        
         
         
         FragmentManager fmanager = getSupportFragmentManager();
@@ -85,8 +88,12 @@ GooglePlayServicesClient.OnConnectionFailedListener{
         SupportMapFragment supportmapfragment = (SupportMapFragment)fragment;
         GoogleMap supportMap = supportmapfragment.getMap();
 		map = supportMap;
-		map.addMarker(new MarkerOptions().position(new LatLng( locationClient.getLastLocation().getLatitude(), locationClient.getLastLocation().getLongitude())).title("Fusca"));
+		map.setMyLocationEnabled(true);
 		
+		
+		if(location != null){
+				map.addMarker(new MarkerOptions().position(new LatLng(48.89161,2.33499)).title("Fusca"));
+		}
 		ImageButton botaoCamera = (ImageButton) findViewById(R.id.imageView1);
 		botaoCamera.setOnClickListener(new View.OnClickListener() {
 			
@@ -148,10 +155,11 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			if (resultCode == RESULT_OK) {
 				ImageButton imagem = (ImageButton) findViewById(R.id.imageView1);
 				imagem.setImageURI(uri);
-				veiculo.setFoto(uri.getPath());
 				
-				VeiculoDao dao = new VeiculoDao(getApplicationContext());
-				dao.alterar(veiculo);
+//				veiculo.setFoto(uri.getPath());
+//				
+//				VeiculoDao dao = new VeiculoDao(getApplicationContext());
+//				dao.alterar(veiculo);
 				
 				
 			}
