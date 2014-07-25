@@ -1,5 +1,11 @@
 package com.thiago.parkupp;
 
+import java.util.Date;
+
+import com.thiago.dao.EstacionamentoDao;
+import com.thiago.modelo.EstacionamentoPU;
+import com.thiago.modelo.VeiculoPU;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -10,16 +16,33 @@ import android.widget.Button;
 
 public class Main extends FragmentActivity {
 
+	private EstacionamentoPU estacionamento;
+	private VeiculoPU veiculo;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
+		EstacionamentoPU emAberto = dao.findEstacionamentoEmAberto();
+		
+		if(emAberto!=null){
+			this.estacionamento = emAberto; 
+		}else{
+			this.estacionamento = new EstacionamentoPU();
+			
+		}
+		
 		Button botao = (Button) findViewById(R.id.botaopark);
 		botao.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(Main.this, Retornar.class);
+				estacionamento.setHoraInicio(new Date());
+				i.putExtra("estacionamento", estacionamento);
+				i.putExtra("veiculo", veiculo);
 				startActivityForResult(i, 1);
 			}
 		});

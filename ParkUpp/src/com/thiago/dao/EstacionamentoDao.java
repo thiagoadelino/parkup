@@ -23,6 +23,37 @@ public class EstacionamentoDao {
 		sqliteCrud = new SqliteCrud(context);
 	}
 
+	public EstacionamentoPU findEstacionamentoEmAberto(){
+		SQLiteDatabase db = sqliteCrud.getWritableDatabase();
+		
+		Cursor cursor = db.rawQuery("SELECT * FROM estacionamento WHERE hora_fim IS NULL", null);
+
+		EstacionamentoPU estacionamento = null;
+		if (cursor.moveToFirst()) {
+			do {
+				
+				estacionamento = new EstacionamentoPU();
+				estacionamento.setId(Integer.parseInt(cursor.getString(0)));
+				estacionamento.setLocal(new LocalPU());
+				estacionamento.getLocal().setId(Integer.parseInt(cursor.getString(1)));
+				estacionamento.setObservacao(cursor.getString(2));
+				estacionamento.setQualificacao(Integer.parseInt(cursor.getString(3)));
+				estacionamento.setVeiculo(new VeiculoPU());
+				estacionamento.getVeiculo().setId(Integer.parseInt(cursor.getString(4)));
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+				
+				try {
+					estacionamento.setHoraInicio(sdf.parse(cursor.getString(5)));
+					estacionamento.setHoraFim(sdf.parse(cursor.getString(6)));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			} while (cursor.moveToNext());
+		}
+		return estacionamento;
+	}
+	
 	public List<EstacionamentoPU> findAll() {
 		SQLiteDatabase db = sqliteCrud.getWritableDatabase();
 		Cursor cursor = db.rawQuery("SELECT * FROM estacionamento", null);
