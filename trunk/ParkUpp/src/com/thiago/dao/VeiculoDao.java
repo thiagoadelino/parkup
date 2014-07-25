@@ -42,6 +42,17 @@ public class VeiculoDao {
 		return veiculos;
 	}
 
+	public void alterar(VeiculoPU veiculo){
+		this.db = sqliteCrud.getWritableDatabase();
+		
+		ContentValues cv = new ContentValues();
+		cv.put("foto", veiculo.getFoto());
+		cv.put("foto", veiculo.getFoto());
+		cv.put("nome", veiculo.getNome());
+		cv.put("id_veiculo", veiculo.isCarro()?1:0);
+		this.db.update("veiculo", cv, "id?", new String[] {veiculo.getId()+""});
+	}
+	
 	public void salvar(VeiculoPU veiculo) {
 		this.db = sqliteCrud.getWritableDatabase();
 		
