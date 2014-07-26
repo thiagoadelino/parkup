@@ -10,5 +10,6 @@
     <string name="title_activity_detalhe_veiculo">Detalhes</string>
     <string name="title_activity_detalhe_local">Detalhes</string>
     <string name="title_activity_retornar">Retornar</string>
+    <string name="title_activity_caminho">Caminho</string>
 
 </resources>

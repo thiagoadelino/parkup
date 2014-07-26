@@ -46,7 +46,6 @@ public class LocalDao {
 		this.db = sqliteCrud.getWritableDatabase();
 		
 		ContentValues cv = new ContentValues();
-		cv.put("id", local.getId());
 		cv.put("bairro", local.getBairro());
 		cv.put("cidade", local.getCidade());
 		cv.put("coordenadaX", local.getCoordenadaX());
@@ -55,8 +54,44 @@ public class LocalDao {
 		this.db.insert("local", null, cv);
 	}
 
+
+	public void atualizar(LocalPU local) {
+		this.db = sqliteCrud.getWritableDatabase();
+		
+		ContentValues cv = new ContentValues();
+		cv.put("bairro", local.getBairro());
+		cv.put("cidade", local.getCidade());
+		cv.put("coordenadaX", local.getCoordenadaX());
+		cv.put("coordenadaY", local.getCoordenadaY());
+		cv.put("estado", local.getEstado());
+		this.db.update("local", cv, "id=?", new String[]{local.getId()+""});
+	}
+
+	
 	public void remover(int id) {
 		this.db = sqliteCrud.getWritableDatabase();
 		this.db.delete("local", "id=?", new String[] { id + "" });
+	}
+	
+
+	public LocalPU findById(int id) {
+		SQLiteDatabase db = sqliteCrud.getWritableDatabase();
+
+		Cursor cursor = db.rawQuery("SELECT * FROM local WHERE id=?", new String[]{id+""});
+		
+		LocalPU local = null;
+		if (cursor.moveToFirst()) {
+			do {
+				local = new LocalPU();
+				local.setId(Integer.parseInt(cursor.getString(0)));
+				local.setBairro(cursor.getString(1));
+				local.setCidade(cursor.getString(2));
+				local.setCoordenadaX(cursor.getString(3));
+				local.setCoordenadaY(cursor.getString(4));
+				local.setEstado(cursor.getString(5));
+				
+			} while (cursor.moveToNext());
+		}
+		return local;
 	}
 }

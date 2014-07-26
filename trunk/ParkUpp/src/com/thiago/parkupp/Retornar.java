@@ -1,15 +1,11 @@
 package com.thiago.parkupp;
 
-import java.io.File;
-import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,83 +13,126 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.maps.MapView;
-import com.google.android.maps.MyLocationOverlay;
-import com.thiago.dao.VeiculoDao;
+import com.thiago.dao.EstacionamentoDao;
+import com.thiago.dao.LocalDao;
 import com.thiago.modelo.EstacionamentoPU;
+import com.thiago.modelo.LocalPU;
 import com.thiago.modelo.VeiculoPU;
 import com.thiago.util.CameraUtil;
 
-public class Retornar extends FragmentActivity implements GooglePlayServicesClient.ConnectionCallbacks,    
-GooglePlayServicesClient.OnConnectionFailedListener{
+public class Retornar extends FragmentActivity  implements LocationListener{
 
 	/** Constante que representa o código de captura de imagem */
 	private static final int CODIGO_CAPTURA_IMAGEM = 100;
 	/** uri do arquivo de imagem gerado. */
 	private Uri uri;
-	private LatLng frameworkSystemLocation = new LatLng(-19.92550, -43.64058);
-	private GoogleMap map;
-	private VeiculoPU veiculo;
-	private double la;
-	private double lo;
-	private LocationClient locationClient;
-	private Location location;
+	private LatLng localizacaoCarro = new LatLng(0.0,0.0);
 	
+	private LatLng localizacaoPessoa = new LatLng(0.0,0.0);;
+	private GoogleMap map;
+	private Location location;
+	private LocationManager locationManager;
+	private EstacionamentoPU estacionamento;
+
+	private MarkerOptions markerCarro;
+	private MarkerOptions markerPessoa;
+	//true é marcacao, false é retorno
+	private boolean marcacao;
+	
+
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.retornar);
-//        getLocalizacao();
         
-        locationClient = new LocationClient(this, this, this);
-    
-//        EstacionamentoPU estacionamento = (EstacionamentoPU) getIntent().getSerializableExtra("estacionamento");
-//        
-//        veiculo = (VeiculoPU) getIntent().getSerializableExtra("veiculo");
-//        if(veiculo == null){
-//        	veiculo = new VeiculoPU();
-//        	veiculo.setCarro(true);
-//        	veiculo.setNome("Veiculo:" + new Date().toString());
-//        	estacionamento.setVeiculo(veiculo);
-//        	//setarLocal
-//        }else{
-//        	
-//        	File imgFile = new  File(veiculo.getFoto());
-//        	if(imgFile.exists()){
-//        	    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-//        	    ImageButton imagem = (ImageButton) findViewById(R.id.imageView1);
-//        	    imagem.setImageBitmap(myBitmap);
-//        	}
-//        }
-//        
-//        
-        
+        locationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 10, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 10, this);
         
         FragmentManager fmanager = getSupportFragmentManager();
         Fragment fragment = fmanager.findFragmentById(R.id.map);
         SupportMapFragment supportmapfragment = (SupportMapFragment)fragment;
         GoogleMap supportMap = supportmapfragment.getMap();
-		map = supportMap;
-		map.setMyLocationEnabled(true);
 		
-		
-		if(location != null){
-				map.addMarker(new MarkerOptions().position(new LatLng(48.89161,2.33499)).title("Fusca"));
+        map = supportMap;
+        map.setMyLocationEnabled(true);
+		map.getUiSettings().setZoomControlsEnabled(true);
+		map.getUiSettings().setScrollGesturesEnabled(false);
+
+		markerPessoa = new MarkerOptions().position(localizacaoPessoa).icon(BitmapDescriptorFactory.fromResource(R.drawable.pessoa));
+		markerPessoa.visible(false);
+		map.addMarker(markerPessoa);
+        
+		Location localizacao = (Location) getIntent().getSerializableExtra("localizacao");
+        if(localizacao != null){
+        	//Persiste Dados
+        	EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
+        	LocalDao ldao = new LocalDao(getApplicationContext());
+        	this.estacionamento = dao.findEstacionamentoEmAberto();
+        	
+        	this.estacionamento.getLocal().setCoordenadaX(localizacao.getLatitude()+"");
+        	this.estacionamento.getLocal().setCoordenadaY(localizacao.getLongitude()+"");
+        	ldao.atualizar(this.estacionamento.getLocal());
+        	//TODO remover se der certo.
+        }else{
+	        EstacionamentoPU estacionamento = (EstacionamentoPU) getIntent().getSerializableExtra("estacionamento");
+	        if(estacionamento != null)
+	        	this.estacionamento = estacionamento;
+	        else
+	        {
+	        	EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
+	        	this.estacionamento = dao.findEstacionamentoEmAberto();
+	        	LocalDao ldao = new LocalDao(getApplicationContext());
+	        	this.estacionamento.setLocal(ldao.findById(this.estacionamento.getLocal().getId()));
+	        	
+	        }
+        }
+        
+		double lat = Double.parseDouble(estacionamento.getLocal().getCoordenadaX());
+		double lon = Double.parseDouble(estacionamento.getLocal().getCoordenadaY());
+    	
+		//Renderiza botões
+		if(lat!=0.0  && lon!=0.0){
+			marcacao = false;
+			Button retornar = (Button) findViewById(R.id.botaoretornar);
+			retornar.setVisibility(View.VISIBLE);
+			
+			Button marcar = (Button) findViewById(R.id.botaomarcarlocal);
+			marcar.setVisibility(View.GONE);
+			
+			localizacaoPessoa = new LatLng(lat, lon);
+    		map.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacaoPessoa , 15));
+    		
+		}else{
+			marcacao = true;
+			Button retornar = (Button) findViewById(R.id.botaoretornar);
+			retornar.setVisibility(View.GONE);
+			
+			Button marcar = (Button) findViewById(R.id.botaomarcarlocal);
+			marcar.setVisibility(View.VISIBLE);
+			
+//			if(location!=null){
+//				localizacaoCarro = new LatLng(location.getLatitude(), location.getLongitude());
+//				map.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacaoCarro , 15));
+//			}
 		}
+		
+        
 		ImageButton botaoCamera = (ImageButton) findViewById(R.id.imageView1);
 		botaoCamera.setOnClickListener(new View.OnClickListener() {
 			
@@ -108,44 +147,81 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			}
 		});
 		
-		Button botao = (Button) findViewById(R.id.botaoretornar);
-		botao.setOnClickListener(new View.OnClickListener() {
+		Button retornar = (Button) findViewById(R.id.botaoretornar);
+		retornar.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent(Retornar.this, Main.class);
-				startActivityForResult(i, 1);
+				Intent i = new Intent(Retornar.this, Caminho.class);
+				startActivity(i);
 			}
 		});
+		
+		Button marcar = (Button) findViewById(R.id.botaomarcarlocal);
+		marcar.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+//				Location localizacao = map.getMyLocation();
+				
+				localizacaoPessoa = new LatLng(location.getLatitude(), location.getLongitude());
+				
+				//Persiste Dados
+	        	EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
+	        	LocalDao ldao = new LocalDao(getApplicationContext());
+	        	
+	        	estacionamento = dao.findEstacionamentoEmAberto();
+	        	estacionamento.getLocal().setCoordenadaX(location.getLatitude()+"");
+	        	estacionamento.getLocal().setCoordenadaY(location.getLongitude()+"");
+
+	        	ldao.atualizar(estacionamento.getLocal());
+	        	
+	        	markerCarro = new MarkerOptions().position(localizacaoPessoa).icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
+	        	markerCarro.visible(true);
+	        	map.addMarker(markerCarro);
+
+	        	Button btnMark = (Button) findViewById(R.id.botaomarcarlocal);
+	        	btnMark.setVisibility(View.GONE);
+	        	Button btnRet = (Button) findViewById(R.id.botaoretornar);
+	        	btnRet.setVisibility(View.VISIBLE);
+	        	
+				Intent i = new Intent(Retornar.this, Retornar.class);
+				startActivity(i);
+				finish();
+			}
+		});
+		
+		TextView horaInicio = (TextView) findViewById(R.id.horarioinicio);
+		TextView dataInicio = (TextView) findViewById(R.id.datainicioest);
+		
+		SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm:ss");
+		SimpleDateFormat sdfData = new SimpleDateFormat("dd/MM/yyyy");
+		
+		horaInicio.setText(sdfHora.format(estacionamento.getHoraInicio()));
+		dataInicio.setText(sdfData.format(estacionamento.getHoraInicio()));
+		
 	}
 	
-	public void getLocalizacao(){
-		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-	    Criteria criteria = new Criteria();
-	    criteria.setAccuracy(Criteria.ACCURACY_FINE);
-	    String provider = locationManager.getBestProvider(criteria, false);
-	    Location location = locationManager.getLastKnownLocation(provider);
-	    if (location != null) {
-	        la = location.getLatitude();
-	        lo = location.getLongitude();
-	        Log.d("create", "la = " + la + " e lo = " + lo);
-//	        new Thread(localizacao.this).start();
-	    } else {
-	        Log.d("update", "location null");
-	    }
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onPostCreate(savedInstanceState);
+		super.onStart();
+		if(markerCarro!=null)
+			markerCarro.visible(true);
+		if(markerPessoa!=null)
+			markerPessoa.visible(true);
 	}
-
-//  MapFragment mf = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-//	if(mf != null) {
-//		map = mf.getMap();
-//	    Marker frameworkSystem = map.addMarker(new MarkerOptions()
-//	                                               .position(frameworkSystemLocation)
-//	                                               .title("Framework System"));
-//	    // Move a câmera para Framework System com zoom 15. 
-//	    map.moveCamera(CameraUpdateFactory.newLatLngZoom(frameworkSystemLocation , 15));
-//	    map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
-//	}
-//	
+	@Override
+	protected void onStart() {
+		super.onStart();
+//		if(markerCarro!=null)
+//			markerCarro.visible(true);
+//		if(markerPessoa!=null)
+//			markerPessoa.visible(true);
+	}
+	
 	/**
 	 * Método chamado no retorno da Activity
 	 */
@@ -180,53 +256,36 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	 @Override
-	    protected void onStart(){
-	        super.onStart();
 
-	        //Tentamos nos conectar ao serviço de localização.
-	        locationClient.connect();
-	    }
+	@Override
+	public void onLocationChanged(Location location) {
+		this.location= location; 
+		if(location!=null){
+			
+			localizacaoPessoa = new LatLng(location.getLatitude(), location.getLongitude());
+			
+			if(marcacao){
+				localizacaoCarro = new LatLng(location.getLatitude(), location.getLongitude());
+//				markerPessoa = new MarkerOptions().position(localizacaoCarro).icon(BitmapDescriptorFactory.fromResource(R.drawable.pessoa));
+//				markerPessoa.visible(true);
+//				map.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacaoCarro , 15));
+			}
+			
+			markerPessoa = new MarkerOptions().position(localizacaoPessoa).icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
+			markerPessoa.visible(true);
+			map.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacaoPessoa , 15));
+		}
+	}
 
-	    @Override
-	    protected void onStop(){
-	       //Disconectamos do serviço de localização quando o app sai do foco.
-	       locationClient.disconnect();
-	       super.onStop();
-	    }
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+	}
 
+	@Override
+	public void onProviderEnabled(String provider) {
+	}
 
-	    @Override
-	    public void onConnected(Bundle bundle) {
-	        //Estamos devidamente conectados ao serviço de localização.
-	        //Podemos pegar posições a vontade agora.
-	        //Se você quiser, pode usar uma variavel booleana aqui,
-	        //para dizer ao seu app que ele pode pegar posições de localização
-	        //diferentes de null.
-	        this.location = locationClient.getLastLocation();
-	    }
-
-	    @Override
-	    public void onDisconnected() {
-	        //Aqui você pode alterar a variável booleana para seu app não tentar
-	        //pegar mais posições de localização, embora, caso você tenha se
-	        //conectado ao serviço, e você tente pegar uma localização,
-	        //ele irá retornar a última localização disponível.
-	    }
-
-	    @Override
-	    public void onConnectionFailed(ConnectionResult connectionResult) {
-	        //O Google Play consegue resolver alguns problemas de conexão com
-	        //sistema de localização. Aqui a gente verificar se o Google Play
-	        //tem a solução para o erro que ocorre.
-	        if (connectionResult.hasResolution()) {
-	            try {
-	                connectionResult.startResolutionForResult(this, 9000);              
-	            } catch (IntentSender.SendIntentException e) {
-	                e.printStackTrace();
-	            }
-	        } 
-
-	    }
-
+	@Override
+	public void onProviderDisabled(String provider) {
+	}
 }
