@@ -8,7 +8,7 @@ public class VeiculoPU implements PersistDB, Serializable{
 	
 	private static final long serialVersionUID = 36491484319661070L;
 
-	private int id;
+	private Integer id;
 	
 	private String nome;
 	
@@ -40,11 +40,11 @@ public class VeiculoPU implements PersistDB, Serializable{
 		this.foto = foto;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

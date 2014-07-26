@@ -54,10 +54,10 @@ public class EstacionamentoAdapter extends BaseAdapter {
 		}
 
 		TextView textViewItem = (TextView) convertView.findViewById(android.R.id.text1);
-		textViewItem.setText(historico.get(position).getLocal().getCidade());
+		textViewItem.setText(historico.get(position).getObservacao());
 		
 		TextView textViewItem2 = (TextView) convertView.findViewById(android.R.id.text2);
-		textViewItem2.setText(historico.get(position).getLocal().getBairro());
+		textViewItem2.setText(historico.get(position).getCoordenadaX()+"-"+historico.get(position).getCoordenadaY());
 		
 
 		return convertView;

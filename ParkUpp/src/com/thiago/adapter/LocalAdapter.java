@@ -10,15 +10,15 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.thiago.modelo.LocalPU;
-
+import com.thiago.modelo.EstacionamentoPU;
+@Deprecated
 public class LocalAdapter extends BaseAdapter{
 
-	private List<LocalPU> historico;
+	private List<EstacionamentoPU> historico;
 
 	private Context contexto;
 	
-	public LocalAdapter(List<LocalPU> historico, Context contexto) {
+	public LocalAdapter(List<EstacionamentoPU> historico, Context contexto) {
 		this.historico = historico;
 		this.contexto = contexto;
 	}
@@ -54,10 +54,10 @@ public class LocalAdapter extends BaseAdapter{
 		}
 
 		TextView textViewItem = (TextView) convertView.findViewById(android.R.id.text1);
-		textViewItem.setText(historico.get(position).getCidade());
+		textViewItem.setText(historico.get(position).getObservacao());
 		
 		TextView textViewItem2 = (TextView) convertView.findViewById(android.R.id.text2);
-		textViewItem2.setText(historico.get(position).getBairro());
+		textViewItem2.setText(historico.get(position).getCoordenadaX()+"-"+historico.get(position).getCoordenadaY());
 		
 
 		return convertView;
