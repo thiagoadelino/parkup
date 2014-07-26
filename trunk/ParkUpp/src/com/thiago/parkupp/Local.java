@@ -1,8 +1,5 @@
 package com.thiago.parkupp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,13 +12,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.thiago.adapter.LocalAdapter;
-import com.thiago.dao.LocalDao;
-import com.thiago.modelo.LocalPU;
 
 public class Local extends Activity {
 
-	private List<LocalPU> hist;
-	
+//	private List<LocalPU> hist;
+//	
 	private LocalAdapter adapter;
 	
 	@Override
@@ -37,7 +32,7 @@ public class Local extends Activity {
 		ListView lista = (ListView) findViewById(R.id.listViewLocal);
 		recuperarItensListagem(lista);
 		
-		if ( hist==null || hist.size() == 0 )
+//		if ( hist==null || hist.size() == 0 )
 			Toast.makeText(Local.this, "Nenhum local cadastrado", Toast.LENGTH_SHORT).show();
 		
 		lista.setOnItemClickListener(new OnItemClickListener() {
@@ -46,9 +41,9 @@ public class Local extends Activity {
 			public void onItemClick(AdapterView<?> adapter, View view, int position,
 					long id) {
 				
-				LocalPU local = (LocalPU) adapter.getItemAtPosition(position);
+//				LocalPU local = (LocalPU) adapter.getItemAtPosition(position);
 				Intent i = new Intent(Local.this, DetalheLocal.class);
-				i.putExtra("local", local);
+//				i.putExtra("local", local);
 				startActivityForResult(i, 1);
 				
 			}
@@ -58,14 +53,14 @@ public class Local extends Activity {
 	}
 
 	private void recuperarItensListagem(ListView lista) {
-		LocalDao dao = new LocalDao(getApplicationContext());
+//		LocalDao dao = new LocalDao(getApplicationContext());
 		
-		hist = dao.findAll();  
-		if ( hist == null ){
-			hist = new ArrayList<LocalPU>();
-		}
+//		hist = dao.findAll();  
+//		if ( hist == null ){
+//			hist = new ArrayList<LocalPU>();
+//		}
 		
-		adapter = new LocalAdapter(hist, Local.this);
+//		adapter = new LocalAdapter(hist, Local.this);
 		lista.setAdapter(adapter);
 		
 	}

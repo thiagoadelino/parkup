@@ -3,6 +3,7 @@ package com.thiago.dao;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -11,7 +12,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.thiago.modelo.EstacionamentoPU;
-import com.thiago.modelo.LocalPU;
 import com.thiago.modelo.VeiculoPU;
 import com.thiago.negocio.SqliteCrud;
 
@@ -21,34 +21,42 @@ public class EstacionamentoDao {
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	public EstacionamentoDao(Context context) {
 		sqliteCrud = new SqliteCrud(context);
+		
+		
+		
 	}
 
-	public EstacionamentoPU findEstacionamentoEmAberto(){
+	
+	public EstacionamentoPU findEstacionamentoEmAberto() {
 		SQLiteDatabase db = sqliteCrud.getWritableDatabase();
-		
-		Cursor cursor = db.rawQuery("SELECT * FROM estacionamento WHERE hora_fim is null", null);
+		Cursor cursor = db.rawQuery(
+				"SELECT * FROM estacionamento WHERE hora_fim is null ;", null);
 
 		EstacionamentoPU estacionamento = null;
 		if (cursor.moveToFirst()) {
 			do {
-				
+				int i = 0;
 				estacionamento = new EstacionamentoPU();
-				estacionamento.setId(Integer.parseInt(cursor.getString(0)));
-				estacionamento.setLocal(new LocalPU());
-				estacionamento.getLocal().setId(Integer.parseInt(cursor.getString(1)));
-				estacionamento.setObservacao(cursor.getString(2));
-				estacionamento.setQualificacao(Integer.parseInt(cursor.getString(3)));
+				estacionamento.setId(Integer.parseInt(cursor.getString(i++)));
+				estacionamento.setCoordenadaX(cursor.getString(i++));
+				estacionamento.setCoordenadaY(cursor.getString(i++));
+				estacionamento.setObservacao(cursor.getString(i++));
+				estacionamento.setQualificacao(Integer.parseInt(cursor.getString(i++)));
 				estacionamento.setVeiculo(new VeiculoPU());
+
+				String str = cursor.getString(i++);
 				
-				if(cursor.getString(4)!=null)
-					estacionamento.getVeiculo().setId(Integer.parseInt(cursor.getString(4)));
-				
-				
-				
+				if ( str != null)
+					estacionamento.getVeiculo().setId(Integer.parseInt(str));
+
 				try {
-					estacionamento.setHoraInicio(sdf.parse(cursor.getString(5)));
-					if(cursor.getString(6)!=null)
-						estacionamento.setHoraFim(sdf.parse(cursor.getString(6)));
+					estacionamento.setHoraInicio(sdf.parse(cursor.getString(i++)));
+					
+					String dataFim = cursor.getString(i++); 
+					
+					if ( dataFim!= null)
+						estacionamento.setHoraFim(sdf.parse(dataFim));
+					
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -56,7 +64,7 @@ public class EstacionamentoDao {
 		}
 		return estacionamento;
 	}
-	
+
 	public List<EstacionamentoPU> findAll() {
 		SQLiteDatabase db = sqliteCrud.getWritableDatabase();
 		Cursor cursor = db.rawQuery("SELECT * FROM estacionamento", null);
@@ -65,22 +73,28 @@ public class EstacionamentoDao {
 		EstacionamentoPU estacionamento = null;
 		if (cursor.moveToFirst()) {
 			do {
-				
+				int i = 0;
 				estacionamento = new EstacionamentoPU();
-				estacionamento.setId(Integer.parseInt(cursor.getString(0)));
-				estacionamento.setLocal(new LocalPU());
-				estacionamento.getLocal().setId(Integer.parseInt(cursor.getString(1)));
-				estacionamento.setObservacao(cursor.getString(2));
-				estacionamento.setQualificacao(Integer.parseInt(cursor.getString(3)));
-				estacionamento.setVeiculo(new VeiculoPU());
-				estacionamento.getVeiculo().setId(Integer.parseInt(cursor.getString(4)));
+				estacionamento.setId(Integer.parseInt(cursor.getString(i++)));
 				
+				estacionamento.setCoordenadaX(cursor.getString(i++));
+				estacionamento.setCoordenadaY(cursor.getString(i++));
+				
+				estacionamento.setObservacao(cursor.getString(i++));
+				estacionamento.setQualificacao(Integer.parseInt(cursor
+						.getString(i++)));
+				estacionamento.setVeiculo(new VeiculoPU());
+				estacionamento.getVeiculo().setId(
+						Integer.parseInt(cursor.getString(i++)));
+
 				try {
-					estacionamento.setHoraInicio(sdf.parse(cursor.getString(5)));
-					
-					if(cursor.getString(6)!=null)
-						estacionamento.setHoraFim(sdf.parse(cursor.getString(6)));
-					
+					estacionamento
+							.setHoraInicio(sdf.parse(cursor.getString(i++)));
+
+					if (cursor.getString(i++) != null)
+						estacionamento
+								.setHoraFim(sdf.parse(cursor.getString(i++)));
+
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
@@ -94,45 +108,56 @@ public class EstacionamentoDao {
 		this.db = sqliteCrud.getWritableDatabase();
 		
 		ContentValues cv = new ContentValues();
-		cv.put("id_local", estacionamento.getLocal().getId());
+		String a =" (name_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
+	    		 " coordenada_x TEXT, " +
+	    		 " coordenada_y TEXT, " +
+	     		 " observacao TEXT, " +
+	     		 " qualificacao INTEGER, " +
+	     		 " id_veiculo INTEGER, " +
+	     		 " hora_inicio TEXT, " +
+	     		 " hora_fim TEXT); ";
+		
+		cv.put("coordenada_x", estacionamento.getCoordenadaX());
+		cv.put("coordenada_y", estacionamento.getCoordenadaY());
 		cv.put("observacao", estacionamento.getObservacao());
 		cv.put("qualificacao", estacionamento.getQualificacao());
-
-		if(estacionamento.getVeiculo() != null)
+		if (estacionamento.getVeiculo() != null)
 			cv.put("id_veiculo", estacionamento.getVeiculo().getId());
-		
 		cv.put("hora_inicio", sdf.format(estacionamento.getHoraInicio()));
-		
-		if(estacionamento.getHoraFim()!=null){
+
+		if (estacionamento.getHoraFim() != null) {
 			cv.put("hora_fim", sdf.format(estacionamento.getHoraFim()));
 		}
-		this.db.update("estacionamento", cv, "id=?", new String[]{estacionamento.getId()+""});
+		this.db.update("estacionamento", cv, "name_id=?",
+				new String[] { estacionamento.getId() + "" });
 	}
-	
+
 	public void salvar(EstacionamentoPU estacionamento) {
-		this.db = sqliteCrud.getWritableDatabase();
 
 		ContentValues cv = new ContentValues();
-		cv.put("id_local", estacionamento.getLocal().getId());
+		cv.put("coordenada_x", estacionamento.getCoordenadaX());
+		cv.put("coordenada_y", estacionamento.getCoordenadaY());
 		cv.put("observacao", estacionamento.getObservacao());
 		cv.put("qualificacao", estacionamento.getQualificacao());
 
-		if(estacionamento.getVeiculo() != null)
+		if (estacionamento.getVeiculo() != null)
 			cv.put("id_veiculo", estacionamento.getVeiculo().getId());
+
+		if(estacionamento.getHoraInicio()==null)
+			estacionamento.setHoraInicio(new Date());
 		
 		cv.put("hora_inicio", sdf.format(estacionamento.getHoraInicio()));
-		
-		if(estacionamento.getHoraFim()!=null){
+
+		if (estacionamento.getHoraFim() != null) {
 			cv.put("hora_fim", sdf.format(estacionamento.getHoraFim()));
 		}
 		
-		
-		this.db.insert("estacionamento", null, cv);
+		estacionamento.setId(Integer.parseInt(""+sqliteCrud.getWritableDatabase().insert("estacionamento", null, cv)));
 	}
 
 	public void remover(int id) {
 		this.db = sqliteCrud.getWritableDatabase();
-		this.db.delete("estacionamento", "id=?", new String[] { id + "" });
+		this.db.delete("estacionamento", "name_id=?", new String[] { id + "" });
 	}
 
 }

@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,7 +28,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.thiago.dao.EstacionamentoDao;
-import com.thiago.dao.LocalDao;
 import com.thiago.modelo.EstacionamentoPU;
 
 public class Caminho extends FragmentActivity implements LocationListener{
@@ -42,20 +42,24 @@ public class Caminho extends FragmentActivity implements LocationListener{
 	private Context contexto;
 	
 	private double distanciaCarroPessoa;
+	
+	private void inicializaLocationManager(){
+		locationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 10, this);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 10, this);
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.caminho);
+		
 		contexto = this;
-		locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
-        locationManager.requestLocationUpdates( LocationManager.GPS_PROVIDER,
-                3000, 10, this);
-//        locationManager.requestLocationUpdates( LocationManager.NETWORK_PROVIDER,
-//                3000, 10, this);
+		
+		inicializaLocationManager();
+		
         EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
-    	LocalDao ldao = new LocalDao(getApplicationContext());
     	estacionamento = dao.findEstacionamentoEmAberto();
-		estacionamento.setLocal(ldao.findById(estacionamento.getLocal().getId()));
 		
 		FragmentManager fmanager = getSupportFragmentManager();
         Fragment fragment = fmanager.findFragmentById(R.id.maparetorno);
@@ -72,6 +76,7 @@ public class Caminho extends FragmentActivity implements LocationListener{
 		
 		markerCarro = new MarkerOptions().position(getLocalizacaoVeiculo()).
 				icon(BitmapDescriptorFactory.fromResource(R.drawable.car));
+		markerCarro.visible(true);
 		map.addMarker(markerCarro);
 		
 		markerPessoa = new MarkerOptions().position(localizacaoPessoa).
@@ -84,7 +89,7 @@ public class Caminho extends FragmentActivity implements LocationListener{
 		
 		
 		
-		Button botao = (Button) findViewById(R.id.confirmarEncontro);
+		ImageButton botao = (ImageButton) findViewById(R.id.confirmarEncontro);
 		botao.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -139,10 +144,8 @@ public class Caminho extends FragmentActivity implements LocationListener{
 
 	public LatLng getLocalizacaoVeiculo(){
 		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
-    	LocalDao ldao = new LocalDao(getApplicationContext());
     	estacionamento = dao.findEstacionamentoEmAberto();
-		estacionamento.setLocal(ldao.findById(estacionamento.getLocal().getId()));
-		return new LatLng(Double.parseDouble(estacionamento.getLocal().getCoordenadaX()), Double.parseDouble(estacionamento.getLocal().getCoordenadaY()));
+		return new LatLng(Double.parseDouble(estacionamento.getCoordenadaX()), Double.parseDouble(estacionamento.getCoordenadaY()));
 	}
 	
 	@Override

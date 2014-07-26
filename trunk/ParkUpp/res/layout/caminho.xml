@@ -7,36 +7,32 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.thiago.parkupp.Caminho" >
- 
+
  	<fragment
  	    android:id="@+id/maparetorno"
  	    android:name="com.google.android.gms.maps.SupportMapFragment"
  	    android:layout_width="match_parent"
  	    android:layout_height="400dp"
- 	    android:layout_above="@+id/button1"
- 	    android:layout_alignParentLeft="true"
+ 	    android:layout_above="@+id/confirmarEncontro"
+ 	    android:layout_centerHorizontal="true" />
+
+ 	<ImageButton
+ 	    android:id="@+id/confirmarEncontro"
+ 	    android:layout_width="wrap_content"
+ 	    android:layout_height="wrap_content"
+ 	    android:layout_alignParentBottom="true"
  	    android:layout_alignParentRight="true"
- 	    android:layout_alignParentTop="true" />
+ 	    android:src="@drawable/check" />
 
  	<TextView
  	    android:id="@+id/distancia"
  	    android:layout_width="wrap_content"
  	    android:layout_height="wrap_content"
- 	    android:layout_alignBottom="@+id/button1"
- 	    android:layout_alignLeft="@+id/maparetorno"
- 	    android:layout_below="@+id/maparetorno"
- 	    android:layout_toLeftOf="@+id/button1"
- 	    android:text="Large Text"
+ 	    android:layout_alignTop="@+id/confirmarEncontro"
+ 	    android:layout_marginRight="38dp"
+ 	    android:layout_marginTop="19dp"
+ 	    android:layout_toLeftOf="@+id/confirmarEncontro"
+ 	    android:text="Distância:100m"
  	    android:textAppearance="?android:attr/textAppearanceLarge" />
-
- 	<Button
- 	    android:id="@+id/confirmarEncontro"
- 	    style="?android:attr/buttonStyleSmall"
- 	    android:layout_width="wrap_content"
- 	    android:layout_height="wrap_content"
- 	    android:layout_alignParentBottom="true"
- 	    android:layout_alignRight="@+id/maparetorno"
- 	    android:layout_marginBottom="15dp"
- 	    android:text="Button" />
 
 </RelativeLayout>

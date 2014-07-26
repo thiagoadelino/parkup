@@ -13,7 +13,6 @@ import com.thiago.negocio.SqliteCrud;
 
 public class VeiculoDao {
 
-	private SQLiteDatabase db = null;
 	private SqliteCrud sqliteCrud = null;
 
 	public VeiculoDao(Context context){
@@ -43,28 +42,25 @@ public class VeiculoDao {
 	}
 
 	public void alterar(VeiculoPU veiculo){
-		this.db = sqliteCrud.getWritableDatabase();
 		
 		ContentValues cv = new ContentValues();
 		cv.put("foto", veiculo.getFoto());
 		cv.put("foto", veiculo.getFoto());
 		cv.put("nome", veiculo.getNome());
 		cv.put("id_veiculo", veiculo.isCarro()?1:0);
-		this.db.update("veiculo", cv, "id?", new String[] {veiculo.getId()+""});
+		sqliteCrud.getWritableDatabase().update("veiculo", cv, "name_id=?", new String[] {veiculo.getId()+""});
 	}
 	
 	public void salvar(VeiculoPU veiculo) {
-		this.db = sqliteCrud.getWritableDatabase();
 		
 		ContentValues cv = new ContentValues();
 		cv.put("foto", veiculo.getFoto());
 		cv.put("nome", veiculo.getNome());
 		cv.put("id_veiculo", veiculo.isCarro()?1:0);
-		this.db.insert("veiculo", null, cv);
+		veiculo.setId(Integer.parseInt(""+sqliteCrud.getWritableDatabase().insert("veiculo", null, cv)));
 	}
 
 	public void remover(int id) {
-		this.db = sqliteCrud.getWritableDatabase();
-		this.db.delete("veiculo", "id=?", new String[] { id + "" });
+		sqliteCrud.getWritableDatabase().delete("veiculo", "name_id=?", new String[] { id + "" });
 	}
 }

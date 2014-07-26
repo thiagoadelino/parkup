@@ -9,11 +9,13 @@ public class EstacionamentoPU implements PersistDB, Serializable{
 
 	private static final long serialVersionUID = 3595870217408496615L;
 
-	private int id;
+	private Integer id;
 	
 	private VeiculoPU veiculo;
 	
-	private LocalPU local;
+	private String coordenadaX;
+	
+	private String coordenadaY;
 	
 	private Date horaInicio;
 	
@@ -29,14 +31,6 @@ public class EstacionamentoPU implements PersistDB, Serializable{
 
 	public void setVeiculo(VeiculoPU veiculo) {
 		this.veiculo = veiculo;
-	}
-
-	public LocalPU getLocal() {
-		return local;
-	}
-
-	public void setLocal(LocalPU local) {
-		this.local = local;
 	}
 
 	public Date getHoraInicio() {
@@ -71,11 +65,27 @@ public class EstacionamentoPU implements PersistDB, Serializable{
 		this.qualificacao = qualificacao;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getCoordenadaX() {
+		return coordenadaX;
+	}
+
+	public void setCoordenadaX(String coordenadaX) {
+		this.coordenadaX = coordenadaX;
+	}
+
+	public String getCoordenadaY() {
+		return coordenadaY;
+	}
+
+	public void setCoordenadaY(String coordenadaY) {
+		this.coordenadaY = coordenadaY;
 	} 
 }

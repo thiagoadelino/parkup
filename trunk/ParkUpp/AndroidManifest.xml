@@ -99,6 +99,10 @@
             android:name=".Caminho"
             android:label="@string/title_activity_caminho" >
         </activity>
+        <activity
+            android:name=".Qualifique"
+            android:label="@string/title_activity_qualifique" >
+        </activity>
     </application>
 
 </manifest>

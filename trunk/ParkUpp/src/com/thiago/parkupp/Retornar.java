@@ -1,6 +1,7 @@
 package com.thiago.parkupp;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,19 +21,14 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.thiago.dao.EstacionamentoDao;
-import com.thiago.dao.LocalDao;
 import com.thiago.modelo.EstacionamentoPU;
-import com.thiago.modelo.LocalPU;
-import com.thiago.modelo.VeiculoPU;
 import com.thiago.util.CameraUtil;
 
 public class Retornar extends FragmentActivity  implements LocationListener{
@@ -42,10 +38,11 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 	/** uri do arquivo de imagem gerado. */
 	private Uri uri;
 	private LatLng localizacaoCarro = new LatLng(0.0,0.0);
-	
 	private LatLng localizacaoPessoa = new LatLng(0.0,0.0);;
+
 	private GoogleMap map;
 	private Location location;
+	
 	private LocationManager locationManager;
 	private EstacionamentoPU estacionamento;
 
@@ -55,84 +52,110 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 	private boolean marcacao;
 	
 
+	private void inicializaLocationManager(){
+		locationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 10, this);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 10, this);
+	}
+	
+	private void inicializaMapa(){
+		
+		FragmentManager fmanager = getSupportFragmentManager();
+		Fragment fragment = fmanager.findFragmentById(R.id.map);
+		SupportMapFragment supportmapfragment = (SupportMapFragment)fragment;
+		GoogleMap supportMap = supportmapfragment.getMap();
+		
+		map = supportMap;
+		map.setMyLocationEnabled(true);
+		map.getUiSettings().setZoomControlsEnabled(true);
+		map.getUiSettings().setScrollGesturesEnabled(false);
+	}
+	
+	private EstacionamentoPU getEstacionamentoPU(){
+		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
+		EstacionamentoPU estaci = dao.findEstacionamentoEmAberto();
+		
+		if (estaci == null) {
+			estaci = new EstacionamentoPU();
+			estaci.setCoordenadaX("0.0");
+			estaci.setCoordenadaY("0.0");
+			estaci.setHoraInicio(new Date());
+//			dao.salvar(estaci);
+		}
+		
+		double lat = Double.parseDouble(estaci.getCoordenadaX());
+		double lon = Double.parseDouble(estaci.getCoordenadaY());
+
+		if(lat!=0.0  && lon!=0.0)
+			marcacao = false;
+		else
+			marcacao = true;
+		return estaci;
+	}
+	
+	private void atualizarLocalizacaoEstacionamento(LatLng coordenadas){
+		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
+		if(estacionamento == null)
+			estacionamento = new EstacionamentoPU();
+		estacionamento.setCoordenadaX(coordenadas.latitude+"");
+    	estacionamento.setCoordenadaY(coordenadas.longitude+"");
+    	if(estacionamento.getId()!=null && estacionamento.getId()>0)
+    		dao.atualizar(estacionamento);
+    	else{
+    		dao.salvar(estacionamento);
+    	}
+//    	this.estacionamento = estacionamento;
+	}
+	
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.retornar);
         
-        locationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 10, this);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 10, this);
-        
-        FragmentManager fmanager = getSupportFragmentManager();
-        Fragment fragment = fmanager.findFragmentById(R.id.map);
-        SupportMapFragment supportmapfragment = (SupportMapFragment)fragment;
-        GoogleMap supportMap = supportmapfragment.getMap();
-		
-        map = supportMap;
-        map.setMyLocationEnabled(true);
-		map.getUiSettings().setZoomControlsEnabled(true);
-		map.getUiSettings().setScrollGesturesEnabled(false);
-
-		markerPessoa = new MarkerOptions().position(localizacaoPessoa).icon(BitmapDescriptorFactory.fromResource(R.drawable.pessoa));
-		markerPessoa.visible(false);
-		map.addMarker(markerPessoa);
-        
-		Location localizacao = (Location) getIntent().getSerializableExtra("localizacao");
-        if(localizacao != null){
-        	//Persiste Dados
-        	EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
-        	LocalDao ldao = new LocalDao(getApplicationContext());
-        	this.estacionamento = dao.findEstacionamentoEmAberto();
-        	
-        	this.estacionamento.getLocal().setCoordenadaX(localizacao.getLatitude()+"");
-        	this.estacionamento.getLocal().setCoordenadaY(localizacao.getLongitude()+"");
-        	ldao.atualizar(this.estacionamento.getLocal());
-        	//TODO remover se der certo.
+//        estacionamento.setObservacao("");
+//		estacionamento.setHoraInicio(new Date());
+//		estacionamento.setCoordenadaX("0.0");
+//		estacionamento.setCoordenadaY("0.0");
+		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
+//		dao.salvar(estacionamento);
+        this.estacionamento = dao.findEstacionamentoEmAberto();
+        if(this.estacionamento==null){
+        	marcacao = true;
+        	estacionamento = new EstacionamentoPU();
+        	estacionamento.setObservacao("");
+        	estacionamento.setHoraInicio(new Date());
+        	estacionamento.setCoordenadaX("0.0");
+        	estacionamento.setCoordenadaY("0.0");
         }else{
-	        EstacionamentoPU estacionamento = (EstacionamentoPU) getIntent().getSerializableExtra("estacionamento");
-	        if(estacionamento != null)
-	        	this.estacionamento = estacionamento;
-	        else
-	        {
-	        	EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
-	        	this.estacionamento = dao.findEstacionamentoEmAberto();
-	        	LocalDao ldao = new LocalDao(getApplicationContext());
-	        	this.estacionamento.setLocal(ldao.findById(this.estacionamento.getLocal().getId()));
-	        	
-	        }
+        	marcacao = false;
         }
+        inicializaLocationManager();
+        inicializaMapa();
         
-		double lat = Double.parseDouble(estacionamento.getLocal().getCoordenadaX());
-		double lon = Double.parseDouble(estacionamento.getLocal().getCoordenadaY());
+//        this.estacionamento = getEstacionamentoPU();
+        
+//		double lat = Double.parseDouble(estacionamento.getCoordenadaX());
+//		double lon = Double.parseDouble(estacionamento.getCoordenadaY());
+		double lat = 0.0;
+		double lon = 0.0;
     	
 		//Renderiza botões
-		if(lat!=0.0  && lon!=0.0){
-			marcacao = false;
-			Button retornar = (Button) findViewById(R.id.botaoretornar);
-			retornar.setVisibility(View.VISIBLE);
-			
-			Button marcar = (Button) findViewById(R.id.botaomarcarlocal);
-			marcar.setVisibility(View.GONE);
-			
-			localizacaoPessoa = new LatLng(lat, lon);
-    		map.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacaoPessoa , 15));
-    		
-		}else{
-			marcacao = true;
-			Button retornar = (Button) findViewById(R.id.botaoretornar);
-			retornar.setVisibility(View.GONE);
-			
-			Button marcar = (Button) findViewById(R.id.botaomarcarlocal);
-			marcar.setVisibility(View.VISIBLE);
-			
-//			if(location!=null){
-//				localizacaoCarro = new LatLng(location.getLatitude(), location.getLongitude());
-//				map.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacaoCarro , 15));
-//			}
-		}
+		Button retornar = (Button) findViewById(R.id.botaoretornar);
+		retornar.setVisibility(isRenderizaMarcar()?View.GONE:View.VISIBLE);
 		
-        
+		Button marcar = (Button) findViewById(R.id.botaomarcarlocal);
+		marcar.setVisibility(!isRenderizaMarcar()?View.GONE:View.VISIBLE);
+		
+		marcarCarro(new LatLng(lat, lon));
+		markerCarro.visible(true);
+	
+		marcarPessoa(localizacaoPessoa);
+		markerPessoa.visible(false);
+		
+		map.addMarker(markerPessoa);
+		
 		ImageButton botaoCamera = (ImageButton) findViewById(R.id.imageView1);
 		botaoCamera.setOnClickListener(new View.OnClickListener() {
 			
@@ -147,45 +170,32 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 			}
 		});
 		
-		Button retornar = (Button) findViewById(R.id.botaoretornar);
+		retornar = (Button) findViewById(R.id.botaoretornar);
 		retornar.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(Retornar.this, Caminho.class);
-				startActivity(i);
+				startActivityForResult(i, 1);
 			}
 		});
 		
-		Button marcar = (Button) findViewById(R.id.botaomarcarlocal);
+		marcar = (Button) findViewById(R.id.botaomarcarlocal);
 		marcar.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
-//				Location localizacao = map.getMyLocation();
-				
-				localizacaoPessoa = new LatLng(location.getLatitude(), location.getLongitude());
-				
-				//Persiste Dados
-	        	EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
-	        	LocalDao ldao = new LocalDao(getApplicationContext());
-	        	
-	        	estacionamento = dao.findEstacionamentoEmAberto();
-	        	estacionamento.getLocal().setCoordenadaX(location.getLatitude()+"");
-	        	estacionamento.getLocal().setCoordenadaY(location.getLongitude()+"");
+				atualizarLocalizacaoEstacionamento(localizacaoPessoa);
 
-	        	ldao.atualizar(estacionamento.getLocal());
-	        	
-	        	markerCarro = new MarkerOptions().position(localizacaoPessoa).icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
-	        	markerCarro.visible(true);
+				marcarCarro(localizacaoPessoa);
 	        	map.addMarker(markerCarro);
 
 	        	Button btnMark = (Button) findViewById(R.id.botaomarcarlocal);
 	        	btnMark.setVisibility(View.GONE);
 	        	Button btnRet = (Button) findViewById(R.id.botaoretornar);
 	        	btnRet.setVisibility(View.VISIBLE);
-	        	
+//	        	
 				Intent i = new Intent(Retornar.this, Retornar.class);
 				startActivity(i);
 				finish();
@@ -197,11 +207,28 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 		
 		SimpleDateFormat sdfHora = new SimpleDateFormat("HH:mm:ss");
 		SimpleDateFormat sdfData = new SimpleDateFormat("dd/MM/yyyy");
-		
-		horaInicio.setText(sdfHora.format(estacionamento.getHoraInicio()));
-		dataInicio.setText(sdfData.format(estacionamento.getHoraInicio()));
+		if(estacionamento != null){
+			horaInicio.setText(sdfHora.format(estacionamento.getHoraInicio()));
+			dataInicio.setText(sdfData.format(estacionamento.getHoraInicio()));
+		}else{
+			horaInicio.setText("");
+			dataInicio.setText("");
+		}
 		
 	}
+	
+	
+	
+	private void marcarPessoa(LatLng loc){
+		markerPessoa = new MarkerOptions().position(loc).icon(BitmapDescriptorFactory.fromResource(R.drawable.pessoa));
+		markerPessoa.visible(true);
+	}
+	
+	private void marcarCarro(LatLng loc){
+		markerCarro = new MarkerOptions().position(loc).icon(BitmapDescriptorFactory.fromResource(R.drawable.car));
+		markerCarro.visible(true);
+	}
+	
 	
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
@@ -260,27 +287,20 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 	@Override
 	public void onLocationChanged(Location location) {
 		this.location= location; 
-		if(location!=null){
-			
-			localizacaoPessoa = new LatLng(location.getLatitude(), location.getLongitude());
-			
-			if(marcacao){
-				localizacaoCarro = new LatLng(location.getLatitude(), location.getLongitude());
-//				markerPessoa = new MarkerOptions().position(localizacaoCarro).icon(BitmapDescriptorFactory.fromResource(R.drawable.pessoa));
-//				markerPessoa.visible(true);
-//				map.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacaoCarro , 15));
-			}
-			
-			markerPessoa = new MarkerOptions().position(localizacaoPessoa).icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
-			markerPessoa.visible(true);
-			map.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacaoPessoa , 15));
-		}
+		this.localizacaoPessoa = new LatLng(location.getLatitude(), location.getLongitude());
+		marcarPessoa(localizacaoPessoa);
+		markerPessoa.visible(true);
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(localizacaoPessoa , 15));
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 	}
 
+	public boolean isRenderizaMarcar(){
+		return this.marcacao;
+	}
+	
 	@Override
 	public void onProviderEnabled(String provider) {
 	}
