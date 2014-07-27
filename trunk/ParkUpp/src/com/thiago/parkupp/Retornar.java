@@ -122,8 +122,6 @@ public class Retornar extends FragmentActivity  implements LocationListener{
     	}
 	}
 	
-	
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -215,8 +213,6 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 	        	Button btnRet = (Button) findViewById(R.id.botaoretornar);
 	        	btnRet.setVisibility(View.VISIBLE);
 	        	Toast.makeText(getApplicationContext(), "Marcação realizada!", Toast.LENGTH_SHORT).show();
-//				Intent i = new Intent(Retornar.this, Retornar.class);
-//				startActivity(i);
 			}
 		});
 		
@@ -283,10 +279,6 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 	@Override
 	protected void onStart() {
 		super.onStart();
-//		if(markerCarro!=null)
-//			markerCarro.visible(true);
-//		if(markerPessoa!=null)
-//			markerPessoa.visible(true);
 	}
 	
 	/**

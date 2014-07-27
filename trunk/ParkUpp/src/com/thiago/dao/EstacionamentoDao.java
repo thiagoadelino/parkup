@@ -21,11 +21,7 @@ public class EstacionamentoDao {
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	public EstacionamentoDao(Context context) {
 		sqliteCrud = new SqliteCrud(context);
-		
-		
-		
 	}
-
 	
 	public EstacionamentoPU findEstacionamentoEmAberto() {
 		SQLiteDatabase db = sqliteCrud.getWritableDatabase();
