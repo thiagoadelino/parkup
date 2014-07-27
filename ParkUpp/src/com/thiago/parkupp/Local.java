@@ -1,16 +1,22 @@
 package com.thiago.parkupp;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,10 +30,54 @@ public class Local extends Activity {
 
 	private LocalAdapter adapter;
 	
+	private Context contextoTela;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.local);
+		
+		contextoTela = this;
+		
+		
+		
+		Button botao = (Button) findViewById(R.id.botaoexcluirtudo);
+		botao.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder adb = new AlertDialog.Builder(contextoTela);
+				adb.setTitle("ParkUp!");
+				adb.setMessage("Deseja excluir todos os locais?");
+				adb.setPositiveButton("Sim", 
+						new DialogInterface.OnClickListener() { 
+		 					public void onClick(DialogInterface arg0, int arg1) { 
+								
+		 						EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
+								List<EstacionamentoPU> estacionamentos = dao.findAll();
+								
+								for(EstacionamentoPU est: estacionamentos){
+									dao.remover(est.getId());
+								}
+								
+								ListView lista = (ListView) findViewById(R.id.listViewLocal);
+								recuperarItensListagem(lista);
+								
+								Toast.makeText(getApplicationContext(), "Remoção realizada com sucesso!", Toast.LENGTH_SHORT);
+							} 
+						});
+				
+				adb.setNegativeButton("Não", 
+						new DialogInterface.OnClickListener() { 
+							public void onClick(DialogInterface arg0, int arg1) { 
+							} });
+
+				AlertDialog popUp = adb.create();
+				popUp.show();
+	
+			}
+		});
+		
 	}
 
 	@Override

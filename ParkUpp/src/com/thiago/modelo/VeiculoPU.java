@@ -47,5 +47,17 @@ public class VeiculoPU implements PersistDB, Serializable{
 	public void setId(Integer id) {
 		this.id = id;
 	}
+	
+	@Override
+	public String toString(){
+		String str = "";
+		if(nome!=null)
+			str +=nome + " ";
+		if(isCarro())
+			str += " [Carro] ";
+		else
+			str += " [Moto] ";
+		return str;
+	}
 
 }

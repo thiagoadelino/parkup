@@ -18,7 +18,7 @@ public class CadastroVeiculo extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.cadastro_veiculo);
 
-		Button botao = (Button) findViewById(R.id.button1);
+		Button botao = (Button) findViewById(R.id.botaoexcluirtudo);
 		botao.setOnClickListener(new View.OnClickListener() {
 			
 		@Override

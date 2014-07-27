@@ -34,7 +34,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.thiago.dao.EstacionamentoDao;
+import com.thiago.dao.VeiculoDao;
 import com.thiago.modelo.EstacionamentoPU;
+import com.thiago.modelo.VeiculoPU;
 import com.thiago.util.CameraUtil;
 
 public class Retornar extends FragmentActivity  implements LocationListener{
@@ -53,6 +55,7 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 	
 	private LocationManager locationManager;
 	private EstacionamentoPU estacionamento;
+	private VeiculoPU veiculo;
 
 	private MarkerOptions markerCarro;
 	private MarkerOptions markerPessoa;
@@ -109,6 +112,9 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 			estacionamento.setUrlfoto(uri.getPath());
 		estacionamento.setCoordenadaX(coordenadas.latitude+"");
     	estacionamento.setCoordenadaY(coordenadas.longitude+"");
+    	if(estacionamento.getVeiculo()==null || estacionamento.getVeiculo().getId() == null){
+    		estacionamento.setVeiculo(veiculo);
+    	}
     	if(estacionamento.getId()!=null && estacionamento.getId()>0)
     		dao.atualizar(estacionamento);
     	else{
@@ -122,12 +128,18 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.retornar);
-        
-        
-        
-		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
 
-		this.estacionamento = dao.findEstacionamentoEmAberto();
+        EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
+        this.estacionamento = dao.findEstacionamentoEmAberto();
+        veiculo = (VeiculoPU) getIntent().getSerializableExtra("veiculo");
+        
+        if(veiculo==null){
+        	if(estacionamento!=null && estacionamento.getVeiculo()!=null && estacionamento.getVeiculo().getId()!=null){
+        		VeiculoDao vDao = new VeiculoDao(getApplicationContext());
+        		estacionamento.setVeiculo(vDao.findById(estacionamento.getVeiculo().getId()));
+        	}
+        }
+        
         if(this.estacionamento==null){
         	marcacao = true;
         	estacionamento = new EstacionamentoPU();
@@ -135,8 +147,10 @@ public class Retornar extends FragmentActivity  implements LocationListener{
         	estacionamento.setHoraInicio(new Date());
         	estacionamento.setCoordenadaX("0.0");
         	estacionamento.setCoordenadaY("0.0");
+        	estacionamento.setVeiculo(veiculo);
         }else{
         	marcacao = false;
+        	
         }
         inicializaLocationManager();
         inicializaMapa();

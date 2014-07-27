@@ -48,26 +48,25 @@ public class DetalheLocal extends Activity {
 			
 		}
 		
-		File imgFile = new  File(es.getUrlfoto());
-
 		
-		
-		if(imgFile.exists()){
-			try{
-				
-				BitmapFactory.Options op = new BitmapFactory.Options();
-				op.inSampleSize = 5;
-				Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(),op);
-			    fotoLocal.setImageBitmap(myBitmap);
-			} catch (OutOfMemoryError e) {
-				System.gc();
-				BitmapFactory.Options op = new BitmapFactory.Options();
-				op.inSampleSize = 5;
-				Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), op);
-			    fotoLocal.setImageBitmap(myBitmap);
+		if(es.getUrlfoto()!=null && !es.getUrlfoto().trim().equals("")){
+			File imgFile = new  File(es.getUrlfoto());
+			if(imgFile.exists()){
+				try{
+					
+					BitmapFactory.Options op = new BitmapFactory.Options();
+					op.inSampleSize = 5;
+					Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(),op);
+				    fotoLocal.setImageBitmap(myBitmap);
+				} catch (OutOfMemoryError e) {
+					System.gc();
+					BitmapFactory.Options op = new BitmapFactory.Options();
+					op.inSampleSize = 5;
+					Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), op);
+				    fotoLocal.setImageBitmap(myBitmap);
+				}
 			}
 		}
-		
 		rb.setRating(Float.parseFloat(""+es.getQualificacao()));
 		
 	}
