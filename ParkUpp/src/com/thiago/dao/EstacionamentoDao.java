@@ -41,6 +41,7 @@ public class EstacionamentoDao {
 				estacionamento.setCoordenadaX(cursor.getString(i++));
 				estacionamento.setCoordenadaY(cursor.getString(i++));
 				estacionamento.setObservacao(cursor.getString(i++));
+				estacionamento.setOutrasInformacoes(cursor.getString(i++));
 				estacionamento.setQualificacao(Integer.parseInt(cursor.getString(i++)));
 				estacionamento.setVeiculo(new VeiculoPU());
 
@@ -81,19 +82,26 @@ public class EstacionamentoDao {
 				estacionamento.setCoordenadaY(cursor.getString(i++));
 				
 				estacionamento.setObservacao(cursor.getString(i++));
+				estacionamento.setOutrasInformacoes(cursor.getString(i++));
+				
 				estacionamento.setQualificacao(Integer.parseInt(cursor
 						.getString(i++)));
-				estacionamento.setVeiculo(new VeiculoPU());
-				estacionamento.getVeiculo().setId(
-						Integer.parseInt(cursor.getString(i++)));
-
+				
+				String str1 = cursor.getString(i++);
+				
+				if(str1!=null){
+					estacionamento.setVeiculo(new VeiculoPU());
+					estacionamento.getVeiculo().setId(
+							Integer.parseInt(str1));
+				}
 				try {
 					estacionamento
 							.setHoraInicio(sdf.parse(cursor.getString(i++)));
 
-					if (cursor.getString(i++) != null)
+					String str2 = cursor.getString(i++);
+					if (str2!=null)
 						estacionamento
-								.setHoraFim(sdf.parse(cursor.getString(i++)));
+								.setHoraFim(sdf.parse(str2));
 
 				} catch (ParseException e) {
 					e.printStackTrace();
@@ -101,6 +109,10 @@ public class EstacionamentoDao {
 				estacionamentos.add(estacionamento);
 			} while (cursor.moveToNext());
 		}
+		
+		
+		
+		
 		return estacionamentos;
 	}
 
@@ -120,6 +132,7 @@ public class EstacionamentoDao {
 		cv.put("coordenada_x", estacionamento.getCoordenadaX());
 		cv.put("coordenada_y", estacionamento.getCoordenadaY());
 		cv.put("observacao", estacionamento.getObservacao());
+		cv.put("outras_informacoes", estacionamento.getOutrasInformacoes());
 		cv.put("qualificacao", estacionamento.getQualificacao());
 		if (estacionamento.getVeiculo() != null)
 			cv.put("id_veiculo", estacionamento.getVeiculo().getId());
@@ -138,6 +151,7 @@ public class EstacionamentoDao {
 		cv.put("coordenada_x", estacionamento.getCoordenadaX());
 		cv.put("coordenada_y", estacionamento.getCoordenadaY());
 		cv.put("observacao", estacionamento.getObservacao());
+		cv.put("outras_informacoes", estacionamento.getOutrasInformacoes());
 		cv.put("qualificacao", estacionamento.getQualificacao());
 
 		if (estacionamento.getVeiculo() != null)

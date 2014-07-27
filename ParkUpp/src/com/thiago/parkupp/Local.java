@@ -1,5 +1,8 @@
 package com.thiago.parkupp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,11 +15,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.thiago.adapter.LocalAdapter;
+import com.thiago.dao.EstacionamentoDao;
+import com.thiago.modelo.EstacionamentoPU;
 
 public class Local extends Activity {
 
-//	private List<LocalPU> hist;
-//	
+	private List<EstacionamentoPU> hist;
+
 	private LocalAdapter adapter;
 	
 	@Override
@@ -32,7 +37,7 @@ public class Local extends Activity {
 		ListView lista = (ListView) findViewById(R.id.listViewLocal);
 		recuperarItensListagem(lista);
 		
-//		if ( hist==null || hist.size() == 0 )
+		if ( hist==null || hist.size() == 0 )
 			Toast.makeText(Local.this, "Nenhum local cadastrado", Toast.LENGTH_SHORT).show();
 		
 		lista.setOnItemClickListener(new OnItemClickListener() {
@@ -41,35 +46,34 @@ public class Local extends Activity {
 			public void onItemClick(AdapterView<?> adapter, View view, int position,
 					long id) {
 				
-//				LocalPU local = (LocalPU) adapter.getItemAtPosition(position);
+				EstacionamentoPU local = (EstacionamentoPU) adapter.getItemAtPosition(position);
 				Intent i = new Intent(Local.this, DetalheLocal.class);
-//				i.putExtra("local", local);
+				i.putExtra("estacionamento", local);
 				startActivityForResult(i, 1);
 				
 			}
 		});
-//		Toast.makeText(Local.this, "Nenhum local cadastrado", Toast.LENGTH_SHORT).show();
 		return true;
 	}
 
 	private void recuperarItensListagem(ListView lista) {
-//		LocalDao dao = new LocalDao(getApplicationContext());
+		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
 		
-//		hist = dao.findAll();  
-//		if ( hist == null ){
-//			hist = new ArrayList<LocalPU>();
-//		}
+		hist = dao.findAll();  
+		if ( hist == null ){
+			hist = new ArrayList<EstacionamentoPU>();
+		}
 		
-//		adapter = new LocalAdapter(hist, Local.this);
+		adapter = new LocalAdapter(hist, Local.this);
 		lista.setAdapter(adapter);
 		
 	}
+	
+	
+	
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;

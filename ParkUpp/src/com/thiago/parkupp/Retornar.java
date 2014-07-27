@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.thiago.dao.EstacionamentoDao;
 import com.thiago.modelo.EstacionamentoPU;
 import com.thiago.util.CameraUtil;
+import com.thiago.util.LocalizacaoUtil;
 
 public class Retornar extends FragmentActivity  implements LocationListener{
 
@@ -42,6 +43,8 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 
 	private GoogleMap map;
 	private Location location;
+	
+	private String enderecoLocal;
 	
 	private LocationManager locationManager;
 	private EstacionamentoPU estacionamento;
@@ -114,13 +117,11 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.retornar);
         
-//        estacionamento.setObservacao("");
-//		estacionamento.setHoraInicio(new Date());
-//		estacionamento.setCoordenadaX("0.0");
-//		estacionamento.setCoordenadaY("0.0");
+        
+        
 		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
-//		dao.salvar(estacionamento);
-        this.estacionamento = dao.findEstacionamentoEmAberto();
+
+		this.estacionamento = dao.findEstacionamentoEmAberto();
         if(this.estacionamento==null){
         	marcacao = true;
         	estacionamento = new EstacionamentoPU();
@@ -134,10 +135,6 @@ public class Retornar extends FragmentActivity  implements LocationListener{
         inicializaLocationManager();
         inicializaMapa();
         
-//        this.estacionamento = getEstacionamentoPU();
-        
-//		double lat = Double.parseDouble(estacionamento.getCoordenadaX());
-//		double lon = Double.parseDouble(estacionamento.getCoordenadaY());
 		double lat = 0.0;
 		double lon = 0.0;
     	
@@ -177,6 +174,7 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 			public void onClick(View v) {
 				Intent i = new Intent(Retornar.this, Caminho.class);
 				startActivityForResult(i, 1);
+				
 			}
 		});
 		
@@ -187,10 +185,10 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 			public void onClick(View v) {
 				
 				atualizarLocalizacaoEstacionamento(localizacaoPessoa);
-
-				marcarCarro(localizacaoPessoa);
+				
+		        marcarCarro(localizacaoPessoa);
 	        	map.addMarker(markerCarro);
-
+	        	
 	        	Button btnMark = (Button) findViewById(R.id.botaomarcarlocal);
 	        	btnMark.setVisibility(View.GONE);
 	        	Button btnRet = (Button) findViewById(R.id.botaoretornar);
@@ -213,6 +211,11 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 		}else{
 			horaInicio.setText("");
 			dataInicio.setText("");
+		}
+		
+		if(!marcacao && estacionamento!=null && estacionamento.getId()!=null){
+			marcarCarro(new LatLng(Double.parseDouble(estacionamento.getCoordenadaX()), Double.parseDouble(estacionamento.getCoordenadaY())));
+        	map.addMarker(markerCarro);
 		}
 		
 	}

@@ -11,7 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.thiago.modelo.EstacionamentoPU;
-@Deprecated
+
 public class LocalAdapter extends BaseAdapter{
 
 	private List<EstacionamentoPU> historico;
@@ -57,7 +57,7 @@ public class LocalAdapter extends BaseAdapter{
 		textViewItem.setText(historico.get(position).getObservacao());
 		
 		TextView textViewItem2 = (TextView) convertView.findViewById(android.R.id.text2);
-		textViewItem2.setText(historico.get(position).getCoordenadaX()+"-"+historico.get(position).getCoordenadaY());
+		textViewItem2.setText(historico.get(position).getOutrasInformacoes());
 		
 
 		return convertView;
