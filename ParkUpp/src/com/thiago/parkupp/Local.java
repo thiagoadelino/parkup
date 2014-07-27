@@ -39,8 +39,6 @@ public class Local extends Activity {
 		
 		contextoTela = this;
 		
-		
-		
 		Button botao = (Button) findViewById(R.id.botaoexcluirtudo);
 		botao.setOnClickListener(new OnClickListener() {
 			

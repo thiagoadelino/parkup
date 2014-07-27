@@ -17,21 +17,20 @@ public class CameraUtil {
 
 	private static File getOutputMediaFile(int type){
 
-	    File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+	    File diretorio = new File(Environment.getExternalStoragePublicDirectory(
 	              Environment.DIRECTORY_PICTURES), "ParkUp");
-	    if (! mediaStorageDir.exists()){
-	        if (! mediaStorageDir.mkdirs()){
+	    if (! diretorio.exists()){
+	        if (! diretorio.mkdirs()){
 	            Log.d("ParkUp", "falha ao criar o diretorio");
 	            return null;
 	        }
 	    }
 
-	    // Create a media file name
 	    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 	    File mediaFile;
 	    if (type == IMAGEM){
-	        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-	        "IMG_"+ timeStamp + ".jpg");
+	        mediaFile = new File(diretorio.getPath() + File.separator +
+	        "PARK_"+ timeStamp + ".jpg");
 	    } else {
 	        return null;
 	    }

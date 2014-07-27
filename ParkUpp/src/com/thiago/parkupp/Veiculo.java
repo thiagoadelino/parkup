@@ -20,9 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.thiago.adapter.VeiculoAdapter;
-import com.thiago.dao.EstacionamentoDao;
 import com.thiago.dao.VeiculoDao;
-import com.thiago.modelo.EstacionamentoPU;
 import com.thiago.modelo.VeiculoPU;
 
 public class Veiculo extends Activity {

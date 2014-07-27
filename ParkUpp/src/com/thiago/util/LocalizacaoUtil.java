@@ -55,21 +55,21 @@ public class LocalizacaoUtil extends AsyncTask<Void, Void, Void>{
 
 				for (int i = 0; i < address_components.length(); i++) {
 					JSONObject zero2 = address_components.getJSONObject(i);
-					String long_name = zero2.getString("short_name");
+					String short_name = zero2.getString("short_name");
 					JSONArray mtypes = zero2.getJSONArray("types");
 					String Type = mtypes.getString(0);
 
-					if (TextUtils.isEmpty(long_name) == false
-							|| !long_name.equals(null)
-							|| long_name.length() > 0 || long_name != "") {
+					if (TextUtils.isEmpty(short_name) == false
+							|| !short_name.equals(null)
+							|| short_name.length() > 0 || short_name != "") {
 						if (Type.equalsIgnoreCase("route")) {
-							endereco = long_name;
+							endereco = short_name;
 						} else if (Type.equalsIgnoreCase("neighborhood")) {
-							bairro = long_name;
+							bairro = short_name;
 						} else if (Type.equalsIgnoreCase("locality")) {
-							cidade = long_name;
+							cidade = short_name;
 						} else if (Type.equalsIgnoreCase("administrative_area_level_1")) {
-							estado = long_name;
+							estado = short_name;
 						}
 
 					}
@@ -142,8 +142,8 @@ public class LocalizacaoUtil extends AsyncTask<Void, Void, Void>{
 			if(lat!=0.0 && lon !=0.0){
 				est.setObservacao(buscarEndereco(lat, lon, true));
 				est.setOutrasInformacoes(buscarEndereco(lat, lon, false));
+				dao.atualizar(est);
 			}
-			dao.atualizar(est);
 		}
 		
 		return null;
