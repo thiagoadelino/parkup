@@ -32,7 +32,7 @@ public class Local extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
+		System.gc();
 		getMenuInflater().inflate(R.menu.local, menu);
 		ListView lista = (ListView) findViewById(R.id.listViewLocal);
 		recuperarItensListagem(lista);

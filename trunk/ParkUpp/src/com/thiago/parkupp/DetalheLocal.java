@@ -1,11 +1,16 @@
 package com.thiago.parkupp;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -36,7 +41,33 @@ public class DetalheLocal extends Activity {
 		cidadeEstado.setText(es.getObservacao());
 		rua.setText(es.getOutrasInformacoes());
 		
-		//TODO CARREGAR IMAGEM.
+		ImageView fotoLocal = (ImageView) findViewById(R.id.imagemfotolocal);
+
+		if(fotoLocal.getDrawable()!=null){
+			fotoLocal.setImageDrawable(null);
+			
+		}
+		
+		File imgFile = new  File(es.getUrlfoto());
+
+		
+		
+		if(imgFile.exists()){
+			try{
+				
+				BitmapFactory.Options op = new BitmapFactory.Options();
+				op.inSampleSize = 5;
+				Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(),op);
+			    fotoLocal.setImageBitmap(myBitmap);
+			} catch (OutOfMemoryError e) {
+				System.gc();
+				BitmapFactory.Options op = new BitmapFactory.Options();
+				op.inSampleSize = 5;
+				Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), op);
+			    fotoLocal.setImageBitmap(myBitmap);
+			}
+		}
+		
 		rb.setRating(Float.parseFloat(""+es.getQualificacao()));
 		
 	}

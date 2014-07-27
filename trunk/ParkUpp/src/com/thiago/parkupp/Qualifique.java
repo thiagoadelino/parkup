@@ -36,9 +36,9 @@ public class Qualifique extends Activity {
 			@Override
 			public void onRatingChanged(RatingBar ratingBar, float rating,
 					boolean fromUser) {
-
+				EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
 				estacionamento.setQualificacao((int) rating);
-				
+				dao.atualizar(estacionamento);
 			}
 		});
 
@@ -48,13 +48,13 @@ public class Qualifique extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
-				dao.atualizar(estacionamento);
+				
+				
 				
 				Intent i = new Intent(Qualifique.this, Main.class);
 				startActivity(i);
 				finish();
-				
+				System.gc();
 				Toast.makeText(contexto, "Estacionamento finalizado!", Toast.LENGTH_SHORT).show();
 			}
 		});
