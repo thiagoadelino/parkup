@@ -1,14 +1,21 @@
 package com.thiago.parkupp;
 
+import java.util.List;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.thiago.dao.EstacionamentoDao;
+import com.thiago.dao.VeiculoDao;
 import com.thiago.modelo.EstacionamentoPU;
 import com.thiago.modelo.VeiculoPU;
 import com.thiago.util.LocalizacaoUtil;
@@ -22,6 +29,8 @@ public class Main extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		veiculo = new VeiculoPU();
 		
 		LocalizacaoUtil l = new LocalizacaoUtil(getApplicationContext());
 		l.execute();
@@ -42,9 +51,40 @@ public class Main extends FragmentActivity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(Main.this, Retornar.class);
+				if(veiculo.getId()!=null)
+					i.putExtra("veiculo", veiculo);
 				startActivity(i);
 			}
 		});
+		
+		Spinner spinner = (Spinner) findViewById(R.id.spinnerVeiculo);
+
+		VeiculoDao vDao = new VeiculoDao(getApplicationContext());
+		List<VeiculoPU> veiculos = vDao.findAll();
+		
+		if(veiculos!=null){
+			ArrayAdapter<VeiculoPU> arrayAdapter = new ArrayAdapter<VeiculoPU>(this, android.R.layout.simple_spinner_dropdown_item, veiculos);
+			ArrayAdapter<VeiculoPU> spinnerArrayAdapter = arrayAdapter;
+			spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+			spinner.setAdapter(spinnerArrayAdapter);
+		}
+ 
+		spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+				
+				veiculo = (VeiculoPU) parent.getItemAtPosition(position);
+				((VeiculoPU) parent.getItemAtPosition(position)).getNome();
+				
+				Toast.makeText(Main.this, "Veículo Selecionado: " + veiculo.getNome(), Toast.LENGTH_LONG).show();
+			}
+ 
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+ 
+			}
+		});
+		
 	}
 
 	@Override

@@ -4,29 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.thiago.adapter.VeiculoAdapter;
+import com.thiago.dao.EstacionamentoDao;
 import com.thiago.dao.VeiculoDao;
+import com.thiago.modelo.EstacionamentoPU;
 import com.thiago.modelo.VeiculoPU;
 
 public class Veiculo extends Activity {
 
-//	private static final int ADD_VEICULO = 100;
-
+	private Context contextoTela;
 	private VeiculoAdapter adapter;
 	private List<VeiculoPU> hist;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		contextoTela = this;
+		
 		setContentView(R.layout.veiculo);
 		
 		ListView lista = (ListView) findViewById(R.id.listViewVeiculo);
@@ -48,11 +57,49 @@ public class Veiculo extends Activity {
 				
 			}
 		});
+		
+		
+		Button botao = (Button) findViewById(R.id.botaoexcluirtudovei);
+		botao.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder adb = new AlertDialog.Builder(contextoTela);
+				adb.setTitle("ParkUp!");
+				adb.setMessage("Deseja excluir todos os veículos?");
+				adb.setPositiveButton("Sim", 
+						new DialogInterface.OnClickListener() { 
+		 					public void onClick(DialogInterface arg0, int arg1) { 
+								
+		 						VeiculoDao dao = new VeiculoDao(getApplicationContext());
+								List<VeiculoPU> veiculos = dao.findAll();
+								
+								for(VeiculoPU v: veiculos){
+									dao.remover(v.getId());
+								}
+								
+								ListView lista = (ListView) findViewById(R.id.listViewVeiculo);
+								recuperarItensListagem(lista);
+								
+								Toast.makeText(getApplicationContext(), "Remoção realizada com sucesso!", Toast.LENGTH_SHORT);
+							} 
+						});
+				
+				adb.setNegativeButton("Não", 
+						new DialogInterface.OnClickListener() { 
+							public void onClick(DialogInterface arg0, int arg1) { 
+							} });
+
+				AlertDialog popUp = adb.create();
+				popUp.show();
+	
+			}
+		});
+		
 	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		if (requestCode == ADD_VEICULO){
 			if (resultCode == RESULT_OK){
 				
 				VeiculoPU v = (VeiculoPU) data.getSerializableExtra("novo_veiculo");
@@ -66,7 +113,6 @@ public class Veiculo extends Activity {
 
 				Toast.makeText(Veiculo.this, "Veiculo cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
 			}
-//		}
 	}
 
 	private void recuperarItensListagem(ListView lista) {

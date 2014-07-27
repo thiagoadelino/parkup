@@ -63,4 +63,24 @@ public class VeiculoDao {
 	public void remover(int id) {
 		sqliteCrud.getWritableDatabase().delete("veiculo", "name_id=?", new String[] { id + "" });
 	}
+
+	public VeiculoPU findById(int id) {
+		SQLiteDatabase db = sqliteCrud.getWritableDatabase();
+		
+		Cursor cursor = db.rawQuery("SELECT * FROM veiculo WHERE name_id=?", new String[]{id+""});
+		
+		VeiculoPU v = null;
+		if (cursor.moveToFirst()) {
+			do {
+				int i = 0;
+				v = new VeiculoPU();
+				v.setId(Integer.parseInt(cursor.getString(i++)));
+				v.setFoto(cursor.getString(i++));
+				v.setNome(cursor.getString(i++));
+				v.setCarro(Integer.parseInt(cursor.getString(i++))==1?true:false);
+				
+			} while (cursor.moveToNext());
+		}
+		return v;
+	}
 }
