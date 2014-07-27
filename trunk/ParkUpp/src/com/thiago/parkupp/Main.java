@@ -1,7 +1,5 @@
 package com.thiago.parkupp;
 
-import java.util.Date;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -13,6 +11,7 @@ import android.widget.Button;
 import com.thiago.dao.EstacionamentoDao;
 import com.thiago.modelo.EstacionamentoPU;
 import com.thiago.modelo.VeiculoPU;
+import com.thiago.util.LocalizacaoUtil;
 
 public class Main extends FragmentActivity {
 
@@ -24,14 +23,15 @@ public class Main extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
+		LocalizacaoUtil l = new LocalizacaoUtil(getApplicationContext());
+		l.execute();
+		
 		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
-//		dao.corrigirSequencia();
 		EstacionamentoPU emAberto = dao.findEstacionamentoEmAberto();
 		
 		if(emAberto!=null){
 			this.estacionamento = emAberto; 
 			Intent i = new Intent(Main.this, Retornar.class);
-//			i.putExtra("estacionamento", this.estacionamento);
 			startActivity(i);
 			finish();
 		}
@@ -49,7 +49,6 @@ public class Main extends FragmentActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}

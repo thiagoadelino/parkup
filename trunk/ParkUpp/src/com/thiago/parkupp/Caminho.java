@@ -1,5 +1,6 @@
 package com.thiago.parkupp;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import android.app.AlertDialog;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,6 +31,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.thiago.dao.EstacionamentoDao;
 import com.thiago.modelo.EstacionamentoPU;
+import com.thiago.util.LocalizacaoUtil;
 
 public class Caminho extends FragmentActivity implements LocationListener{
 	
@@ -55,6 +58,8 @@ public class Caminho extends FragmentActivity implements LocationListener{
 		setContentView(R.layout.caminho);
 		
 		contexto = this;
+		LocalizacaoUtil l = new LocalizacaoUtil(contexto);
+		l.execute();
 		
 		inicializaLocationManager();
 		
@@ -84,11 +89,6 @@ public class Caminho extends FragmentActivity implements LocationListener{
 		markerPessoa.visible(false);
 		map.addMarker(markerPessoa);		
 		
-		
-		
-		
-		
-		
 		ImageButton botao = (ImageButton) findViewById(R.id.confirmarEncontro);
 		botao.setOnClickListener(new OnClickListener() {
 			
@@ -96,20 +96,22 @@ public class Caminho extends FragmentActivity implements LocationListener{
 			public void onClick(View v) {
 				
 				AlertDialog.Builder adb = new AlertDialog.Builder(contexto);
-				adb.setTitle("?");
+				adb.setTitle("ParkUp!");
 				adb.setMessage("Você encontrou seu veículo?");
 				adb.setPositiveButton("Sim", 
 						new DialogInterface.OnClickListener() { 
-							public void onClick(DialogInterface arg0, int arg1) { 
+		 					public void onClick(DialogInterface arg0, int arg1) { 
 								EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
 								estacionamento = dao.findEstacionamentoEmAberto();
 								estacionamento.setHoraFim(new Date());
 								dao.atualizar(estacionamento);
 
-								Intent i = new Intent(Caminho.this, Main.class);
+								Intent i = new Intent(Caminho.this, Qualifique.class);
+								i.putExtra("estacionamento", estacionamento);
 								startActivity(i);
+								finish();
 
-								Toast.makeText(contexto, "Estacionamento finalizado!", Toast.LENGTH_SHORT).show(); } 
+								 } 
 							});
 				
 				adb.setNegativeButton("Não", 
@@ -125,16 +127,12 @@ public class Caminho extends FragmentActivity implements LocationListener{
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.caminho, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
@@ -150,7 +148,6 @@ public class Caminho extends FragmentActivity implements LocationListener{
 	
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onPostCreate(savedInstanceState);
 		super.onStart();
 		if(markerCarro!=null)
@@ -161,28 +158,49 @@ public class Caminho extends FragmentActivity implements LocationListener{
 	
 	@Override
 	public void onLocationChanged(Location location) {
+		
 		localizacaoPessoa = new LatLng(location.getLatitude(), location.getLongitude());
 		markerPessoa = new MarkerOptions().position(localizacaoPessoa).icon(BitmapDescriptorFactory.fromResource(R.drawable.pin));
 		markerPessoa.visible(true);
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom( localizacaoPessoa, 15));
+		TextView distancia = (TextView) findViewById(R.id.distancia);
+		
+		distancia.setText(retornaDistancia(
+				markerCarro.getPosition().latitude, 
+				markerCarro.getPosition().longitude, 
+				markerPessoa.getPosition().latitude,
+				markerPessoa.getPosition().longitude));
 		
 	}
+	
+	private String retornaDistancia(double lat1, double lon1, double lat2, double lon2) {
+			int R = 6371000;
+		    double dLat = Math.toRadians(lat2 - lat1);
+		    double dLon = Math.toRadians(lon2 - lon1);
+		    lat1 = Math.toRadians(lat1);
+		    lat2 = Math.toRadians(lat2);
 
+		    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+
+		    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+		    double resultado = R*c;
+		    
+		    DecimalFormat distanciaEmMetros = new DecimalFormat("####,#"); 
+		    String distanciaFormatada = distanciaEmMetros.format(resultado); 
+		    return distanciaFormatada + " metros";
+		
+	}
+	
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -23,6 +23,8 @@ public class EstacionamentoPU implements PersistDB, Serializable{
 	
 	private String observacao;
 	
+	private String outrasInformacoes;
+	
 	private int qualificacao;
 
 	public VeiculoPU getVeiculo() {
@@ -87,5 +89,13 @@ public class EstacionamentoPU implements PersistDB, Serializable{
 
 	public void setCoordenadaY(String coordenadaY) {
 		this.coordenadaY = coordenadaY;
+	}
+
+	public String getOutrasInformacoes() {
+		return outrasInformacoes;
+	}
+
+	public void setOutrasInformacoes(String outrasInformacoes) {
+		this.outrasInformacoes = outrasInformacoes;
 	} 
 }
