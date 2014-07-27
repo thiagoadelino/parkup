@@ -1,10 +1,15 @@
 package com.thiago.parkupp;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,6 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,7 +36,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.thiago.dao.EstacionamentoDao;
 import com.thiago.modelo.EstacionamentoPU;
 import com.thiago.util.CameraUtil;
-import com.thiago.util.LocalizacaoUtil;
 
 public class Retornar extends FragmentActivity  implements LocationListener{
 
@@ -100,6 +105,8 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
 		if(estacionamento == null)
 			estacionamento = new EstacionamentoPU();
+		if(uri!=null)
+			estacionamento.setUrlfoto(uri.getPath());
 		estacionamento.setCoordenadaX(coordenadas.latitude+"");
     	estacionamento.setCoordenadaY(coordenadas.longitude+"");
     	if(estacionamento.getId()!=null && estacionamento.getId()>0)
@@ -107,7 +114,6 @@ public class Retornar extends FragmentActivity  implements LocationListener{
     	else{
     		dao.salvar(estacionamento);
     	}
-//    	this.estacionamento = estacionamento;
 	}
 	
 	
@@ -160,7 +166,7 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 			public void onClick(View v) {
 
 				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				uri = CameraUtil.getOutputMediaFileUri(CameraUtil.MEDIA_TYPE_IMAGE);
+				uri = CameraUtil.getOutputMediaFileUri(CameraUtil.IMAGEM);
 				intent.putExtra(MediaStore.EXTRA_OUTPUT, uri); 
 				startActivityForResult(intent, CODIGO_CAPTURA_IMAGEM);
 				
@@ -174,7 +180,7 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 			public void onClick(View v) {
 				Intent i = new Intent(Retornar.this, Caminho.class);
 				startActivityForResult(i, 1);
-				
+				finish();
 			}
 		});
 		
@@ -183,6 +189,7 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 			
 			@Override
 			public void onClick(View v) {
+				
 				
 				atualizarLocalizacaoEstacionamento(localizacaoPessoa);
 				
@@ -193,10 +200,9 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 	        	btnMark.setVisibility(View.GONE);
 	        	Button btnRet = (Button) findViewById(R.id.botaoretornar);
 	        	btnRet.setVisibility(View.VISIBLE);
-//	        	
-				Intent i = new Intent(Retornar.this, Retornar.class);
-				startActivity(i);
-				finish();
+	        	Toast.makeText(getApplicationContext(), "Marcação realizada!", Toast.LENGTH_SHORT).show();
+//				Intent i = new Intent(Retornar.this, Retornar.class);
+//				startActivity(i);
 			}
 		});
 		
@@ -218,9 +224,27 @@ public class Retornar extends FragmentActivity  implements LocationListener{
         	map.addMarker(markerCarro);
 		}
 		
+		if(estacionamento.getUrlfoto()!=null){
+			File imgFile = new  File(estacionamento.getUrlfoto());
+			if(imgFile.exists()){
+				BitmapFactory.Options op = new BitmapFactory.Options();
+				op.inSampleSize = 8;
+				
+			    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), op);
+			    botaoCamera.setImageBitmap(myBitmap);
+			}
+		}else if(uri!=null){
+			File imgFile = new  File(uri.getPath());
+			if(imgFile.exists()){
+				BitmapFactory.Options op = new BitmapFactory.Options();
+				op.inSampleSize = 8;
+				
+			    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), op);
+			    botaoCamera.setImageBitmap(myBitmap);
+			}
+		}
+		
 	}
-	
-	
 	
 	private void marcarPessoa(LatLng loc){
 		markerPessoa = new MarkerOptions().position(loc).icon(BitmapDescriptorFactory.fromResource(R.drawable.pessoa));
@@ -235,7 +259,6 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 	
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onPostCreate(savedInstanceState);
 		super.onStart();
 		if(markerCarro!=null)
@@ -260,14 +283,15 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 		if (requestCode == CODIGO_CAPTURA_IMAGEM) {
 			if (resultCode == RESULT_OK) {
 				ImageButton imagem = (ImageButton) findViewById(R.id.imageView1);
-				imagem.setImageURI(uri);
 				
-//				veiculo.setFoto(uri.getPath());
-//				
-//				VeiculoDao dao = new VeiculoDao(getApplicationContext());
-//				dao.alterar(veiculo);
-				
-				
+				File imgFile = new  File(uri.getPath());
+				if(imgFile.exists()){
+					BitmapFactory.Options op = new BitmapFactory.Options();
+					op.inSampleSize = 8;
+					
+				    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), op);
+				    imagem.setImageBitmap(myBitmap);
+				}
 			}
 		}
 	}

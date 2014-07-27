@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class SqliteCrud extends SQLiteOpenHelper{
 
-		private static final String DATABASE_NAME = "asdfg.db";
+		private static final String DATABASE_NAME = "data_base.db";
 		public static final int DATABASE_VERSION = 1;
 		
 		public SqliteCrud(Context context) {
@@ -21,7 +21,8 @@ public class SqliteCrud extends SQLiteOpenHelper{
 		    		 " coordenada_x TEXT, " +
 		    		 " coordenada_y TEXT, " +
 		     		 " observacao TEXT, " +
-		     		 " outras_informacoes TEXT, " +
+		     		 " urlfoto TEXT, " +
+		    		 " outras_informacoes TEXT, " +
 		     		 " qualificacao INTEGER, " +
 		     		 " id_veiculo INTEGER, " +
 		     		 " hora_inicio TEXT, " +

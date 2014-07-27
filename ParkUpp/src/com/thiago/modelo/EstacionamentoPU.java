@@ -23,6 +23,8 @@ public class EstacionamentoPU implements PersistDB, Serializable{
 	
 	private String observacao;
 	
+	private String urlfoto;
+	
 	private String outrasInformacoes;
 	
 	private int qualificacao;
@@ -97,5 +99,13 @@ public class EstacionamentoPU implements PersistDB, Serializable{
 
 	public void setOutrasInformacoes(String outrasInformacoes) {
 		this.outrasInformacoes = outrasInformacoes;
+	}
+
+	public String getUrlfoto() {
+		return urlfoto;
+	}
+
+	public void setUrlfoto(String urlfoto) {
+		this.urlfoto = urlfoto;
 	} 
 }

@@ -41,6 +41,7 @@ public class EstacionamentoDao {
 				estacionamento.setCoordenadaX(cursor.getString(i++));
 				estacionamento.setCoordenadaY(cursor.getString(i++));
 				estacionamento.setObservacao(cursor.getString(i++));
+				estacionamento.setUrlfoto(cursor.getString(i++));
 				estacionamento.setOutrasInformacoes(cursor.getString(i++));
 				estacionamento.setQualificacao(Integer.parseInt(cursor.getString(i++)));
 				estacionamento.setVeiculo(new VeiculoPU());
@@ -82,6 +83,7 @@ public class EstacionamentoDao {
 				estacionamento.setCoordenadaY(cursor.getString(i++));
 				
 				estacionamento.setObservacao(cursor.getString(i++));
+				estacionamento.setUrlfoto(cursor.getString(i++));
 				estacionamento.setOutrasInformacoes(cursor.getString(i++));
 				
 				estacionamento.setQualificacao(Integer.parseInt(cursor
@@ -120,18 +122,11 @@ public class EstacionamentoDao {
 		this.db = sqliteCrud.getWritableDatabase();
 		
 		ContentValues cv = new ContentValues();
-		String a =" (name_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
-	    		 " coordenada_x TEXT, " +
-	    		 " coordenada_y TEXT, " +
-	     		 " observacao TEXT, " +
-	     		 " qualificacao INTEGER, " +
-	     		 " id_veiculo INTEGER, " +
-	     		 " hora_inicio TEXT, " +
-	     		 " hora_fim TEXT); ";
 		
 		cv.put("coordenada_x", estacionamento.getCoordenadaX());
 		cv.put("coordenada_y", estacionamento.getCoordenadaY());
 		cv.put("observacao", estacionamento.getObservacao());
+		cv.put("urlfoto", estacionamento.getUrlfoto());
 		cv.put("outras_informacoes", estacionamento.getOutrasInformacoes());
 		cv.put("qualificacao", estacionamento.getQualificacao());
 		if (estacionamento.getVeiculo() != null)
@@ -151,6 +146,7 @@ public class EstacionamentoDao {
 		cv.put("coordenada_x", estacionamento.getCoordenadaX());
 		cv.put("coordenada_y", estacionamento.getCoordenadaY());
 		cv.put("observacao", estacionamento.getObservacao());
+		cv.put("urlfoto", estacionamento.getUrlfoto());
 		cv.put("outras_informacoes", estacionamento.getOutrasInformacoes());
 		cv.put("qualificacao", estacionamento.getQualificacao());
 
