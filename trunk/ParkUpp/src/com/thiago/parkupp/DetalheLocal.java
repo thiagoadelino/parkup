@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;

@@ -19,17 +19,16 @@
         <ListView
             android:id="@+id/listViewVeiculo"
             android:layout_width="match_parent"
-            android:layout_height="364dp" >
+            android:layout_height="411dp" >
         </ListView>
     </LinearLayout>
 
     <Button
         android:id="@+id/botaoexcluirtudovei"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignLeft="@+id/linearLayout1"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_marginTop="14dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
         android:text="Excluir Tudo!" />
 
 </RelativeLayout>

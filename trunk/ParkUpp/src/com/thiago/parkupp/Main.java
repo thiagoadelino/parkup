@@ -1,11 +1,8 @@
 package com.thiago.parkupp;
 
-import java.io.File;
 import java.util.List;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -14,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -22,7 +18,7 @@ import com.thiago.dao.EstacionamentoDao;
 import com.thiago.dao.VeiculoDao;
 import com.thiago.modelo.EstacionamentoPU;
 import com.thiago.modelo.VeiculoPU;
-import com.thiago.util.LocalizacaoUtil;
+import com.thiago.util.AtualizadorEnderecoTask;
 
 public class Main extends FragmentActivity {
 
@@ -36,7 +32,7 @@ public class Main extends FragmentActivity {
 		
 		veiculo = new VeiculoPU();
 		
-		LocalizacaoUtil l = new LocalizacaoUtil(getApplicationContext());
+		AtualizadorEnderecoTask l = new AtualizadorEnderecoTask(getApplicationContext());
 		l.execute();
 		
 		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
