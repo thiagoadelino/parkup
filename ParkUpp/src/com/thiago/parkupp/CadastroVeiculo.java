@@ -20,10 +20,10 @@ public class CadastroVeiculo extends Activity {
 
 		Button botao = (Button) findViewById(R.id.botaoexcluirtudo);
 		botao.setOnClickListener(new View.OnClickListener() {
-			
-		@Override
-		public void onClick(View v) {
-				
+
+			@Override
+			public void onClick(View v) {
+					
 				com.thiago.modelo.VeiculoPU veiculo = new com.thiago.modelo.VeiculoPU();
 				
 				EditText modelo = (EditText) findViewById(R.id.editText1);
@@ -45,7 +45,9 @@ public class CadastroVeiculo extends Activity {
 				i.putExtra("novo_veiculo", veiculo);
 				setResult(RESULT_OK, i);
 				finish();
+				
 			}
+			
 		});
 	
 	}

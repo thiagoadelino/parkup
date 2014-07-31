@@ -36,7 +36,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Main"
+            android:name="com.thiago.parkupp.Main"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,32 +45,32 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Veiculo"
+            android:name="com.thiago.parkupp.Veiculo"
             android:label="@string/title_activity_veiculo"
-            android:parentActivityName=".Main" >
+            android:parentActivityName="com.thiago.parkupp.Main" >
             <meta-data
                 android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" />
         </activity>
         <activity
-            android:name=".Local"
+            android:name="com.thiago.parkupp.Local"
             android:label="@string/title_activity_local"
-            android:parentActivityName=".Main" >
+            android:parentActivityName="com.thiago.parkupp.Main" >
         </activity>
         <activity
-            android:name=".CadastroVeiculo"
+            android:name="com.thiago.parkupp.CadastroVeiculo"
             android:label="@string/title_activity_cadastro_veiculo"
-            android:parentActivityName=".Veiculo" >
+            android:parentActivityName="com.thiago.parkupp.Veiculo" >
         </activity>
         <activity
-            android:name=".DetalheVeiculo"
+            android:name="com.thiago.parkupp.DetalheVeiculo"
             android:label="@string/title_activity_detalhe_veiculo"
-            android:parentActivityName=".Veiculo" >
+            android:parentActivityName="com.thiago.parkupp.Veiculo" >
         </activity>
         <activity
-            android:name=".DetalheLocal"
+            android:name="com.thiago.parkupp.DetalheLocal"
             android:label="@string/title_activity_detalhe_local"
-            android:parentActivityName=".Local" >
+            android:parentActivityName="com.thiago.parkupp.Local" >
         </activity>
 
         <!-- <meta-data -->
@@ -82,7 +82,7 @@
         <!-- android:name="com.google.android.maps.v2.API_KEY" -->
         <!-- android:value="8B:6B:AB:18:8F:C3:64:72:7F:8F:72:46:C6:D4:39:FA:F7:81:B7:7E;com.thiago.parkupp" /> -->
         <activity
-            android:name=".Retornar"
+            android:name="com.thiago.parkupp.Retornar"
             android:label="@string/title_activity_retornar" >
         </activity>
 
@@ -96,11 +96,11 @@
         <uses-library android:name="com.google.android.maps" />
 
         <activity
-            android:name=".Caminho"
+            android:name="com.thiago.parkupp.Caminho"
             android:label="@string/title_activity_caminho" >
         </activity>
         <activity
-            android:name=".Qualifique"
+            android:name="com.thiago.parkupp.Qualifique"
             android:label="@string/title_activity_qualifique" >
         </activity>
     </application>

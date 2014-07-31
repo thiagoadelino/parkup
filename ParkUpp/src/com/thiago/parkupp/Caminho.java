@@ -8,34 +8,26 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.thiago.arq.LocalizationActivity;
 import com.thiago.dao.EstacionamentoDao;
 import com.thiago.modelo.EstacionamentoPU;
-import com.thiago.util.LocalizacaoUtil;
+import com.thiago.util.AtualizadorEnderecoTask;
 
-public class Caminho extends FragmentActivity implements LocationListener{
+public class Caminho extends LocalizationActivity{
 	
-	private LocationManager locationManager;
 	private GoogleMap map;
 	private EstacionamentoPU estacionamento;
 	private MarkerOptions markerPessoa;
@@ -44,34 +36,21 @@ public class Caminho extends FragmentActivity implements LocationListener{
 	
 	private Context contexto;
 	
-	private double distanciaCarroPessoa;
-	
-	private void inicializaLocationManager(){
-		locationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 10, this);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 10, this);
-	}
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.caminho);
 		
 		contexto = this;
-		LocalizacaoUtil l = new LocalizacaoUtil(contexto);
+		AtualizadorEnderecoTask l = new AtualizadorEnderecoTask(contexto);
 		l.execute();
 		
-		inicializaLocationManager();
+		super.inicializarLocationManager();
 		
         EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
     	estacionamento = dao.findEstacionamentoEmAberto();
 		
-		FragmentManager fmanager = getSupportFragmentManager();
-        Fragment fragment = fmanager.findFragmentById(R.id.maparetorno);
-        SupportMapFragment supportmapfragment = (SupportMapFragment)fragment;
-        GoogleMap supportMap = supportmapfragment.getMap();
-        
-        map = supportMap;
+        map = getMapaById(R.id.maparetorno);
         map.setMyLocationEnabled(true);
 		map.getUiSettings().setZoomControlsEnabled(true);
 		map.getUiSettings().setScrollGesturesEnabled(true);
@@ -174,21 +153,21 @@ public class Caminho extends FragmentActivity implements LocationListener{
 	}
 	
 	private String retornaDistancia(double lat1, double lon1, double lat2, double lon2) {
-			int R = 6371000;
-		    double dLat = Math.toRadians(lat2 - lat1);
-		    double dLon = Math.toRadians(lon2 - lon1);
-		    lat1 = Math.toRadians(lat1);
-		    lat2 = Math.toRadians(lat2);
+		int R = 6371000;
+	    double dLat = Math.toRadians(lat2 - lat1);
+	    double dLon = Math.toRadians(lon2 - lon1);
+	    lat1 = Math.toRadians(lat1);
+	    lat2 = Math.toRadians(lat2);
 
-		    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+	    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
 
-		    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-		    double resultado = R*c;
-		    
-		    DecimalFormat distanciaEmMetros = new DecimalFormat("####,#"); 
-		    String distanciaFormatada = distanciaEmMetros.format(resultado); 
-		    return distanciaFormatada + " metros";
+	    double resultado = R*c;
+	    
+//	    DecimalFormat distanciaEmMetros = new DecimalFormat("#######.#"); 
+	    String distanciaFormatada = String.format("%.2f", resultado); 
+	    return distanciaFormatada + " metros";
 		
 	}
 	

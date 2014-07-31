@@ -1,24 +1,14 @@
 package com.thiago.parkupp;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,79 +19,42 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.thiago.arq.LocalizationActivity;
 import com.thiago.dao.EstacionamentoDao;
 import com.thiago.dao.VeiculoDao;
 import com.thiago.modelo.EstacionamentoPU;
 import com.thiago.modelo.VeiculoPU;
 import com.thiago.util.CameraUtil;
 
-public class Retornar extends FragmentActivity  implements LocationListener{
+public class Retornar extends LocalizationActivity{
 
 	/** Constante que representa o código de captura de imagem */
 	private static final int CODIGO_CAPTURA_IMAGEM = 100;
 	/** uri do arquivo de imagem gerado. */
 	private Uri uri;
-	private LatLng localizacaoCarro = new LatLng(0.0,0.0);
-	private LatLng localizacaoPessoa = new LatLng(0.0,0.0);;
+
+	private LatLng localizacaoPessoa = new LatLng(0.0,0.0);
 
 	private GoogleMap map;
-	private Location location;
 	
-	private String enderecoLocal;
-	
-	private LocationManager locationManager;
 	private EstacionamentoPU estacionamento;
+	
 	private VeiculoPU veiculo;
 
 	private MarkerOptions markerCarro;
+	
 	private MarkerOptions markerPessoa;
 	//true é marcacao, false é retorno
 	private boolean marcacao;
 	
-
-	private void inicializaLocationManager(){
-		locationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 10, this);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 10, this);
-	}
-	
 	private void inicializaMapa(){
-		
-		FragmentManager fmanager = getSupportFragmentManager();
-		Fragment fragment = fmanager.findFragmentById(R.id.map);
-		SupportMapFragment supportmapfragment = (SupportMapFragment)fragment;
-		GoogleMap supportMap = supportmapfragment.getMap();
-		
-		map = supportMap;
+		map = getMapaById(R.id.map);
 		map.setMyLocationEnabled(true);
 		map.getUiSettings().setZoomControlsEnabled(true);
 		map.getUiSettings().setScrollGesturesEnabled(false);
-	}
-	
-	private EstacionamentoPU getEstacionamentoPU(){
-		EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
-		EstacionamentoPU estaci = dao.findEstacionamentoEmAberto();
-		
-		if (estaci == null) {
-			estaci = new EstacionamentoPU();
-			estaci.setCoordenadaX("0.0");
-			estaci.setCoordenadaY("0.0");
-			estaci.setHoraInicio(new Date());
-//			dao.salvar(estaci);
-		}
-		
-		double lat = Double.parseDouble(estaci.getCoordenadaX());
-		double lon = Double.parseDouble(estaci.getCoordenadaY());
-
-		if(lat!=0.0  && lon!=0.0)
-			marcacao = false;
-		else
-			marcacao = true;
-		return estaci;
 	}
 	
 	private void atualizarLocalizacaoEstacionamento(LatLng coordenadas){
@@ -150,7 +103,7 @@ public class Retornar extends FragmentActivity  implements LocationListener{
         	marcacao = false;
         	
         }
-        inicializaLocationManager();
+        super.inicializarLocationManager();
         inicializaMapa();
         
 		double lat = 0.0;
@@ -191,7 +144,7 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(Retornar.this, Caminho.class);
-				startActivityForResult(i, 1);
+				startActivity(i);
 				finish();
 			}
 		});
@@ -201,7 +154,6 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 			
 			@Override
 			public void onClick(View v) {
-				
 				
 				atualizarLocalizacaoEstacionamento(localizacaoPessoa);
 				
@@ -230,30 +182,23 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 		}
 		
 		if(!marcacao && estacionamento!=null && estacionamento.getId()!=null){
-			marcarCarro(new LatLng(Double.parseDouble(estacionamento.getCoordenadaX()), Double.parseDouble(estacionamento.getCoordenadaY())));
+			marcarCarro(new LatLng(
+						Double.parseDouble(estacionamento.getCoordenadaX()), 
+						Double.parseDouble(estacionamento.getCoordenadaY())));
+			
         	map.addMarker(markerCarro);
 		}
 		
 		if(estacionamento.getUrlfoto()!=null){
-			File imgFile = new  File(estacionamento.getUrlfoto());
-			if(imgFile.exists()){
-				BitmapFactory.Options op = new BitmapFactory.Options();
-				op.inSampleSize = 8;
-				
-			    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), op);
-			    botaoCamera.setImageBitmap(myBitmap);
-			}
+			Bitmap bm = CameraUtil.getBitmapByUri(estacionamento.getUrlfoto(), 8);
+			if(bm!=null)
+			    botaoCamera.setImageBitmap(bm);
 		}else if(uri!=null){
-			File imgFile = new  File(uri.getPath());
-			if(imgFile.exists()){
-				BitmapFactory.Options op = new BitmapFactory.Options();
-				op.inSampleSize = 8;
-				
-			    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), op);
-			    botaoCamera.setImageBitmap(myBitmap);
-			}
+			
+			Bitmap bm = CameraUtil.getBitmapByUri(uri, 8);
+			if(bm!=null)
+			    botaoCamera.setImageBitmap(bm);
 		}
-		
 	}
 	
 	private void marcarPessoa(LatLng loc){
@@ -265,7 +210,6 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 		markerCarro = new MarkerOptions().position(loc).icon(BitmapDescriptorFactory.fromResource(R.drawable.car));
 		markerCarro.visible(true);
 	}
-	
 	
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
@@ -289,14 +233,11 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 		if (requestCode == CODIGO_CAPTURA_IMAGEM) {
 			if (resultCode == RESULT_OK) {
 				ImageButton imagem = (ImageButton) findViewById(R.id.imageView1);
-				
-				File imgFile = new  File(uri.getPath());
-				if(imgFile.exists()){
-					BitmapFactory.Options op = new BitmapFactory.Options();
-					op.inSampleSize = 8;
-					
-				    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath(), op);
-				    imagem.setImageBitmap(myBitmap);
+				if(uri!=null){
+					Bitmap bm = CameraUtil.getBitmapByUri(uri, 8);
+					if(bm!=null){
+						imagem.setImageBitmap(bm);
+					}
 				}
 			}
 		}
@@ -319,7 +260,7 @@ public class Retornar extends FragmentActivity  implements LocationListener{
 
 	@Override
 	public void onLocationChanged(Location location) {
-		this.location= location; 
+		super.onLocationChanged(location);
 		this.localizacaoPessoa = new LatLng(location.getLatitude(), location.getLongitude());
 		marcarPessoa(localizacaoPessoa);
 		markerPessoa.visible(true);

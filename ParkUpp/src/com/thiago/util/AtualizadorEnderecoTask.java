@@ -22,29 +22,43 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class LocalizacaoUtil extends AsyncTask<Void, Void, Void>{
+/**
+ * Tarefa assíncrona chamada para atualizar o endereço referente as coordenadas selecionadas no ponto do estacionamento,
+ * visto que tais informações são adquiridas através de um serviço json.
+ * 
+ * @author thiagoadelino
+ *
+ */
+public class AtualizadorEnderecoTask extends AsyncTask<Void, Void, Void>{
 
 	public String enderecoResult;
 	
 	public Context contexto;
 	
-	public LocalizacaoUtil(){
+	/** Construtor */
+	public AtualizadorEnderecoTask(){
 		
 	}
-	
-	public LocalizacaoUtil(Context contexto){
+	/** Construtor */
+	public AtualizadorEnderecoTask(Context contexto){
 		this.contexto = contexto;
 	}
-	
+	/**
+	 * Método que realiza a busca do endereço através das coordenadas e retorna uma string.
+	 * @param lat
+	 * @param lon
+	 * @param titulo
+	 * @return
+	 */
 	public String buscarEndereco(double lat, double lon, boolean titulo) {
-
+		String urlGoogle = "http://maps.googleapis.com/maps/api/geocode/json?latlng=";
 		String endereco = "";
 		String bairro = "";
 		String cidade = "";
 		String estado = "";
 		try {
 
-			JSONObject jsonObj = getJSONfromURL("http://maps.googleapis.com/maps/api/geocode/json?latlng="
+			JSONObject jsonObj = getJSONfromURL(urlGoogle
 					+ lat + "," + lon + "&sensor=true");
 			String Status = jsonObj.getString("status");
 			if (Status.equalsIgnoreCase("OK")) {
@@ -87,12 +101,10 @@ public class LocalizacaoUtil extends AsyncTask<Void, Void, Void>{
 
 	public static JSONObject getJSONfromURL(String url) {
 
-		// initialize
 		InputStream is = null;
 		String result = "";
 		JSONObject jObject = null;
 
-		// http post
 		try {
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = new HttpPost(url);
@@ -101,10 +113,9 @@ public class LocalizacaoUtil extends AsyncTask<Void, Void, Void>{
 			is = entity.getContent();
 
 		} catch (Exception e) {
-			Log.e("log_tag", "Error in http connection " + e.toString());
+			Log.e("log_tag", "Problema conexão http " + e.toString());
 		}
 
-		// convert response to string
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					is, "utf-8"), 8);
@@ -116,14 +127,13 @@ public class LocalizacaoUtil extends AsyncTask<Void, Void, Void>{
 			is.close();
 			result = sb.toString();
 		} catch (Exception e) {
-			Log.e("log_tag", "Error converting result " + e.toString());
+			Log.e("log_tag", "Erro " + e.toString());
 		}
 
-		// try parse the string to a JSON object
 		try {
 			jObject = new JSONObject(result);
 		} catch (JSONException e) {
-			Log.e("log_tag", "Error parsing data " + e.toString());
+			Log.e("log_tag", "Erro " + e.toString());
 		}
 
 		return jObject;
@@ -132,7 +142,6 @@ public class LocalizacaoUtil extends AsyncTask<Void, Void, Void>{
 	@Override
 	protected Void doInBackground(Void... params) {
 	
-		
 		EstacionamentoDao dao = new EstacionamentoDao(this.contexto);
 		List<EstacionamentoPU> estacionamentos = dao.findAll();
 		
