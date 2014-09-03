@@ -27,15 +27,21 @@ public class Qualifique extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.qualifique);
 		contexto = this;
+		
 		this.estacionamento = (EstacionamentoPU) getIntent().getSerializableExtra("estacionamento");
 		
 		
 		RatingBar qualificacao = (RatingBar) findViewById(R.id.qualificacaoLocal);
+		qualificacao.setRating(3);
 		qualificacao.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
 			
 			@Override
 			public void onRatingChanged(RatingBar ratingBar, float rating,
 					boolean fromUser) {
+				
+				if(rating == 0.0)
+					rating = 3;
+				
 				EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
 				estacionamento.setQualificacao((int) rating);
 				dao.atualizar(estacionamento);
@@ -49,7 +55,13 @@ public class Qualifique extends Activity {
 			@Override
 			public void onClick(View v) {
 				
+				RatingBar qualificacao = (RatingBar) findViewById(R.id.qualificacaoLocal);
+				if(qualificacao.getRating()==0.0)
+					qualificacao.setRating(3);
 				
+				EstacionamentoDao dao = new EstacionamentoDao(getApplicationContext());
+				estacionamento.setQualificacao((int) qualificacao.getRating());
+				dao.atualizar(estacionamento);
 				
 				Intent i = new Intent(Qualifique.this, Main.class);
 				startActivity(i);

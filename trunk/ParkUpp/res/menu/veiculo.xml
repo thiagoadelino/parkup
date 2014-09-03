@@ -16,11 +16,4 @@
         android:showAsAction="always"
         android:title="Adicionar"/>
 
-    <item
-        android:id="@+id/editarveiculo"
-        android:icon="@drawable/pencil"
-        android:orderInCategory="3"
-        android:showAsAction="always"
-        android:title="Editar"/>
-
 </menu>
