@@ -140,20 +140,12 @@ public class Veiculo extends Activity {
 			adicionar();
 			return true;
 
-		case R.id.editarveiculo:
-			editar();
-			return true;
-
 		case R.id.action_settings:
 			return true;
 
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-	}
-	
-	private void editar() {
-		
 	}
 
 	public void adicionar(){
