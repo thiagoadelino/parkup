@@ -7,3 +7,5 @@ The app uses:
 - SQLite operations (Insert/Delete)
 - Device Camera
 - Device GPS
+
+App Video: https://www.youtube.com/watch?v=4hpvoFYsqnY
